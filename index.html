@@ -2,1556 +2,1181 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="author" content="Zahra Essam">
-<title>Ch1 · Lesson2 · Hardware vs Software </title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+<title>Ch1 · Lesson2 · Hardware vs Software</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════════════
-   DESIGN TOKENS
-════════════════════════════════════════════════════ */
-:root {
-  --blue:       #2563EB;
-  --blue-2:     #1D4ED8;
-  --blue-lt:    #DBEAFE;
-  --blue-dk:    #1E3A8A;
-  --blue-xdk:   #0F1E45;
-  --blue-ac:    #60A5FA;
-  --blue-glow:  rgba(96,165,250,.35);
-
-  --cyan:       #06B6D4;
-  --teal:       #0D9488;
-  --green:      #10B981;  --green-lt: #D1FAE5;  --green-ac: #34D399;
-  --orange:     #F97316;  --orange-lt:#FFF7ED;  --orange-ac:#FB923C;
-  --purple:     #7C3AED;  --purple-lt:#EDE9FE;  --purple-ac:#A78BFA;
-  --red:        #EF4444;  --red-lt:   #FEE2E2;
-
-  --ink:        #0A1628;
-  --ink-2:      #1C2B3A;
-  --ink-3:      #334155;
-  --ink-4:      #64748B;
-  --ink-5:      #94A3B8;
-  --white:      #FFFFFF;
-  --bg:         #F0F6FF;
-  --rule:       #CBD5E1;
-
-  --f:   'Cairo', sans-serif;
-  --fm:  'IBM Plex Mono', monospace;
-
-  --r:    16px;
-  --r-sm: 10px;
-  --r-xs: 6px;
-
-  --step-dur: 0.4s;
-  --slide-dur: 0.45s;
+/* ─────────────────────────────────────────────────────
+   DESIGN SYSTEM TOKENS
+───────────────────────────────────────────────────── */
+:root{
+  --navy:     #061022;
+  --navy-2:   #0C1E3D;
+  --navy-3:   #112650;
+  --blue:     #1A56DB;
+  --blue-2:   #2563EB;
+  --blue-3:   #3B82F6;
+  --blue-lt:  #DBEAFE;
+  --blue-xlt: #EFF6FF;
+  --blue-ac:  #60A5FA;
+  --cyan:     #06B6D4;
+  --green:    #16A34A;  --green-lt:#DCFCE7;  --green-ac:#22C55E;
+  --red:      #DC2626;  --red-lt:  #FEE2E2;  --red-ac:  #EF4444;
+  --orange:   #D97706;  --orange-lt:#FEF3C7;
+  --purple:   #7C3AED;  --purple-lt:#EDE9FE;  --purple-ac:#A78BFA;
+  --s50:  #F8FAFC;  --s100:#F1F5F9;  --s200:#E2E8F0;
+  --s300: #CBD5E1;  --s400:#94A3B8;  --s500:#64748B;
+  --s600: #475569;  --s700:#334155;  --s800:#1E293B;  --s900:#0F172A;
+  --white:#FFFFFF;
+  --fh:'Tajawal',sans-serif;
+  --fb:'Cairo',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+  --r-xs:3px; --r-sm:8px; --r:13px; --r-lg:18px;
+  --step-dur:.38s; --slide-dur:.4s;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--fb);
+  background:var(--navy);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 
-/* ════════════════════════════════════════════════════
-   RESET & BASE
-════════════════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  touch-action: manipulation;
+/* ─────────────────────────────────────────────────────
+   SLIDE VIEWPORT
+───────────────────────────────────────────────────── */
+#viewport{
+  position:relative;
+  width:100%;max-width:1060px;
+  /* fluid height: fills available space above control-bar */
+  flex:1;
+  overflow:hidden;
+  min-height:0;
 }
-body {
-  font-family: var(--f);
-  background: #060E24;
-  overflow: hidden;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  -webkit-font-smoothing: antialiased;
+.slide{
+  display:none;position:absolute;inset:0;
+  background:linear-gradient(148deg,#0A1E42 0%,#0C2255 55%,#07183A 100%);
+  flex-direction:column;overflow:hidden;
 }
-
-/* ════════════════════════════════════════════════════
-   DECK FRAME
-════════════════════════════════════════════════════ */
-#deck {
-  position: relative;
-  width: 100%;
-  max-width: 1100px;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 720px;
-  overflow: hidden;
+.slide.active{
+  display:flex;
+  animation:sldIn var(--slide-dur) cubic-bezier(.22,1,.36,1) both;
 }
-
-@media (max-width: 768px) {
-  #deck {
-    max-height: 100vh;
-    max-height: 100dvh;
-    border-radius: 0;
-  }
-}
-
-/* ════════════════════════════════════════════════════
-   SLIDE BASE
-════════════════════════════════════════════════════ */
-.slide {
-  display: none;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(145deg, #0C1F42 0%, #0A2155 55%, #061837 100%);
-  overflow: hidden;
-  overflow-x: hidden;
-  flex-direction: column;
-  border-radius: 18px;
-  box-shadow:
-    0 0 0 1px rgba(96,165,250,.12),
-    0 40px 100px rgba(0,0,0,.6);
-}
-.slide.active {
-  display: flex;
-  animation: slideIn var(--slide-dur) cubic-bezier(.22,1,.36,1) forwards;
-}
-@keyframes slideIn {
-  from { opacity:0; transform: scale(.97) translateY(16px); }
-  to   { opacity:1; transform: scale(1)  translateY(0); }
-}
-
-/* ambient grid */
-.slide::before {
-  content:'';
-  position:absolute; inset:0;
+@keyframes sldIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+/* ambient layers */
+.slide::before{
+  content:'';position:absolute;inset:0;
   background-image:
-    linear-gradient(rgba(96,165,250,.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(96,165,250,.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events:none;
-  z-index:0;
+    linear-gradient(rgba(96,165,250,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(96,165,250,.03) 1px,transparent 1px);
+  background-size:52px 52px;pointer-events:none;z-index:0;
 }
-.slide::after {
-  content:'';
-  position:absolute; inset:0;
+.slide::after{
+  content:'';position:absolute;inset:0;
   background:
-    radial-gradient(ellipse at 20% 20%, rgba(37,99,235,.28) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 80%, rgba(124,58,237,.18) 0%, transparent 55%);
-  pointer-events:none;
-  z-index:0;
+    radial-gradient(ellipse at 18% 22%,rgba(26,86,219,.22) 0%,transparent 55%),
+    radial-gradient(ellipse at 82% 78%,rgba(124,58,237,.12) 0%,transparent 55%);
+  pointer-events:none;z-index:0;
 }
 
-/* ════════════════════════════════════════════════════
-   SLIDE HEADER STRIP
-════════════════════════════════════════════════════ */
-.slide-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px 0;
-  position: relative;
-  z-index: 10;
-  flex-shrink: 0;
+/* ─────────────────────────────────────────────────────
+   SLIDE INNER STRUCTURE
+───────────────────────────────────────────────────── */
+.s-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 26px 0;position:relative;z-index:10;flex-shrink:0;
 }
-.slide-header .s-tag {
-  font-family: var(--fm);
-  font-size: clamp(8px, 1.5vw, 10px);
-  letter-spacing: 3px;
-  color: rgba(96,165,250,.75);
-  background: rgba(96,165,250,.1);
-  border: 1px solid rgba(96,165,250,.22);
-  border-radius: 100px;
-  padding: 5px 14px;
-  text-transform: uppercase;
-  white-space: nowrap;
+.s-tag{
+  font-family:var(--fm);font-size:clamp(8px,1.4vw,10px);
+  letter-spacing:3px;color:rgba(96,165,250,.75);
+  background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);
+  border-radius:100px;padding:5px 14px;text-transform:uppercase;white-space:nowrap;
 }
-.slide-header .s-num {
-  font-family: var(--fm);
-  font-size: clamp(9px, 1.5vw, 11px);
-  color: rgba(255,255,255,.3);
-  letter-spacing: 1px;
+.s-ctr{
+  font-family:var(--fm);font-size:clamp(9px,1.4vw,11px);
+  color:rgba(255,255,255,.28);letter-spacing:1px;
 }
-.slide-header .s-num span { color: var(--blue-ac); }
+.s-ctr span{color:var(--blue-ac);}
 
-/* ════════════════════════════════════════════════════
-   SLIDE CONTENT WRAPPER
-════════════════════════════════════════════════════ */
-.slide-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-  gap: 14px;
+.s-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:12px 28px;position:relative;z-index:2;
+  overflow:hidden;overflow-y:auto;gap:13px;scrollbar-width:none;
 }
-@media (max-width: 768px) {
-  .slide-body { padding: 10px 16px; gap: 10px; }
-}
+.s-body::-webkit-scrollbar{display:none}
+@media(max-width:680px){.s-body{padding:8px 14px;gap:9px;}}
 
-/* ════════════════════════════════════════════════════
-   SLIDE FOOTER — "Zahra Essam"
-════════════════════════════════════════════════════ */
-.slide-foot {
-  padding: 8px 24px 10px;
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  border-top: 1px solid rgba(255,255,255,.05);
+.s-foot{
+  padding:7px 26px 10px;position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  border-top:1px solid rgba(255,255,255,.04);
 }
-.foot-author {
-  font-family: var(--fm);
-  font-size: clamp(9px, 1.5vw, 11px);
-  letter-spacing: 2px;
-  color: rgba(255,255,255,.25);
+.foot-name{
+  font-family:var(--fm);font-size:clamp(9px,1.3vw,10px);
+  letter-spacing:2px;color:rgba(255,255,255,.2);
 }
-.step-progress {
-  display: flex; gap: 5px; align-items: center;
+.sp-track{display:flex;gap:4px;align-items:center;}
+.sp-pip{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,.14);transition:all .2s;
 }
-.sp-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,.15);
-  transition: all .22s;
-}
-.sp-dot.lit { background: var(--blue-ac); box-shadow: 0 0 5px var(--blue-ac); }
+.sp-pip.on{background:var(--blue-ac);box-shadow:0 0 4px var(--blue-ac);}
 
-/* ════════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────────
    STEP MECHANISM
-════════════════════════════════════════════════════ */
-.step {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(12px);
-  transition:
-    opacity var(--step-dur) ease,
-    visibility var(--step-dur) ease,
-    transform var(--step-dur) cubic-bezier(.22,1,.36,1);
+───────────────────────────────────────────────────── */
+.step{
+  opacity:0;visibility:hidden;transform:translateY(13px);pointer-events:none;
+  transition:opacity var(--step-dur) ease,
+             visibility var(--step-dur) ease,
+             transform var(--step-dur) cubic-bezier(.22,1,.36,1);
 }
-.step.revealed {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.step.on{opacity:1;visibility:visible;transform:none;pointer-events:auto;}
+
+/* ─────────────────────────────────────────────────────
+   CONTROL BAR (strictly below viewport)
+───────────────────────────────────────────────────── */
+#ctrl{
+  width:100%;max-width:1060px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 16px env(safe-area-inset-bottom,9px);
+  background:rgba(6,16,34,.95);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(96,165,250,.1);
+}
+.c-btn{
+  font-family:var(--fb);font-size:clamp(13px,2.2vw,15px);font-weight:800;
+  color:var(--white);background:rgba(26,86,219,.28);
+  border:1.5px solid rgba(96,165,250,.32);
+  border-radius:100px;padding:0 22px;height:48px;min-width:96px;
+  cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.c-btn:hover{background:rgba(26,86,219,.5);border-color:var(--blue-ac);}
+.c-btn:active{transform:scale(.93);}
+.c-btn:disabled{opacity:.28;pointer-events:none;}
+#prog{
+  display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  justify-content:center;max-width:calc(100% - 220px);
+}
+.p-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,.16);transition:all .2s;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.p-dot.cur{background:var(--blue-ac);width:18px;border-radius:4px;box-shadow:0 0 5px var(--blue-ac);}
+.p-dot.done{background:rgba(96,165,250,.38);}
+
+/* ─────────────────────────────────────────────────────
+   TYPOGRAPHY UTILS
+───────────────────────────────────────────────────── */
+.mono-pill{
+  font-family:var(--fm);font-size:clamp(8px,1.4vw,10px);letter-spacing:4px;
+  color:rgba(96,165,250,.72);background:rgba(96,165,250,.1);
+  border:1px solid rgba(96,165,250,.18);border-radius:100px;padding:4px 15px;
+  text-transform:uppercase;white-space:nowrap;
+}
+.s-title{
+  font-family:var(--fh);font-size:clamp(22px,4.5vw,46px);font-weight:900;
+  color:var(--white);text-align:center;line-height:1.18;
+}
+.s-title .ac{color:var(--blue-ac);}
+.s-title .gd{color:#FCD34D;}
+.s-sub{
+  font-size:clamp(12px,1.9vw,15px);font-weight:600;
+  color:rgba(255,255,255,.48);text-align:center;line-height:1.65;max-width:580px;
+}
+.fw{width:100%;max-width:880px;}
+
+/* ─────────────────────────────────────────────────────
+   CARD ROW / GRID
+───────────────────────────────────────────────────── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.8vw,16px);width:100%;max-width:860px;}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.4vw,13px);width:100%;max-width:860px;}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(7px,1.3vw,11px);width:100%;max-width:860px;}
+@media(max-width:640px){
+  .row2{grid-template-columns:1fr;}
+  .row3{grid-template-columns:1fr 1fr;}
+  .row4{grid-template-columns:1fr 1fr;}
 }
 
-/* ════════════════════════════════════════════════════
-   NAVIGATION BAR
-════════════════════════════════════════════════════ */
-#nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px env(safe-area-inset-bottom, 10px);
-  background: rgba(6,14,36,.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(96,165,250,.12);
+/* generic glass card */
+.gcard{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r);padding:clamp(13px,2.2vw,20px);
+  display:flex;flex-direction:column;gap:8px;
+  transition:border-color .2s,transform .2s;
 }
-.nav-btn {
-  font-family: var(--f);
-  font-size: clamp(14px, 2.5vw, 16px);
-  font-weight: 800;
-  color: var(--white);
-  background: rgba(37,99,235,.25);
-  border: 1.5px solid rgba(96,165,250,.3);
-  border-radius: 100px;
-  padding: 0 20px;
-  height: 48px;
-  min-width: 100px;
-  cursor: pointer;
-  transition: all .2s;
-  display: flex; align-items: center; justify-content: center;
-  gap: 6px;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  flex-shrink: 0;
-}
-.nav-btn:hover  { background: rgba(37,99,235,.45); border-color: var(--blue-ac); }
-.nav-btn:active { transform: scale(.94); }
-.nav-btn:disabled { opacity: .3; cursor: not-allowed; pointer-events: none; }
+.gcard:hover{border-color:rgba(96,165,250,.35);transform:translateY(-2px);}
 
-#progress-wrap {
-  display: flex; align-items: center; gap: 5px;
-  flex-wrap: wrap; justify-content: center;
-  max-width: 200px;
-}
-.prog-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: rgba(255,255,255,.18);
-  transition: all .22s;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0;
-}
-.prog-dot.active { background: var(--blue-ac); width: 20px; border-radius: 4px; box-shadow: 0 0 6px var(--blue-ac); }
-.prog-dot.done   { background: rgba(96,165,250,.4); }
+/* accent stripe */
+.gcard.blue-acc{border-color:rgba(96,165,250,.3);background:rgba(26,86,219,.14);}
+.gcard.purple-acc{border-color:rgba(167,139,250,.3);background:rgba(124,58,237,.14);}
 
-/* nav height compensation */
-.slide-body { padding-bottom: calc(12px + 0px); }
+.gc-ico{
+  width:clamp(36px,6vw,48px);height:clamp(36px,6vw,48px);
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.gc-ico svg{width:clamp(18px,3vw,24px);height:clamp(18px,3vw,24px);}
+.gc-ico.blue  {background:rgba(96,165,250,.15);}  .gc-ico.blue  svg{color:var(--blue-ac);}
+.gc-ico.purple{background:rgba(167,139,250,.15);} .gc-ico.purple svg{color:var(--purple-ac);}
+.gc-ico.green {background:rgba(34,197,94,.12);}   .gc-ico.green  svg{color:var(--green-ac);}
+.gc-ico.red   {background:rgba(239,68,68,.12);}    .gc-ico.red    svg{color:var(--red-ac);}
 
-/* ════════════════════════════════════════════════════
-   TYPOGRAPHY UTILITIES
-════════════════════════════════════════════════════ */
-.mono-tag {
-  font-family: var(--fm);
-  font-size: clamp(8px, 1.6vw, 10px);
-  letter-spacing: 4px;
-  color: rgba(96,165,250,.7);
-  background: rgba(96,165,250,.1);
-  border: 1px solid rgba(96,165,250,.2);
-  border-radius: 100px;
-  padding: 5px 16px;
-  text-transform: uppercase;
-  white-space: nowrap;
+.gc-label{
+  font-family:var(--fm);font-size:clamp(8px,1.3vw,10px);
+  letter-spacing:2px;font-weight:700;margin-bottom:2px;
 }
-.slide-title {
-  font-size: clamp(22px, 4.5vw, 46px);
-  font-weight: 900;
-  color: var(--white);
-  text-align: center;
-  line-height: 1.2;
-}
-.slide-title .hl   { color: var(--blue-ac); }
-.slide-title .gold { color: #FCD34D; }
-.slide-sub {
-  font-size: clamp(13px, 2vw, 16px);
-  font-weight: 600;
-  color: rgba(255,255,255,.5);
-  text-align: center;
-  line-height: 1.6;
-  max-width: 600px;
-}
+.gc-title{font-family:var(--fh);font-size:clamp(14px,2.4vw,19px);font-weight:800;color:var(--white);}
+.gc-body{font-size:clamp(11px,1.8vw,13.5px);color:rgba(255,255,255,.65);line-height:1.7;}
+.gc-body strong{color:rgba(255,255,255,.9);font-family:var(--fm);font-size:.92em;}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 1 — Title & Brain Teaser
-════════════════════════════════════════════════════ */
-.brain-bubble {
-  width: clamp(80px,14vw,110px);
-  height: clamp(80px,14vw,110px);
-  background: linear-gradient(135deg, #1D4ED8, #2563EB, #3B82F6);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: clamp(36px, 7vw, 56px);
-  border: 3px solid rgba(96,165,250,.4);
-  box-shadow: 0 0 60px rgba(37,99,235,.5), 0 0 0 12px rgba(96,165,250,.06);
-  position: relative;
-  animation: floatBubble 3s ease-in-out infinite;
-  flex-shrink: 0;
+/* ─────────────────────────────────────────────────────
+   BYTE CALLOUT
+───────────────────────────────────────────────────── */
+.byte-row{
+  display:flex;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-sm);padding:13px 17px;width:100%;max-width:860px;
 }
-@keyframes floatBubble {
-  0%,100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-8px) scale(1.03); }
+.byte-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#1A56DB,#3B82F6);
+  display:flex;align-items:center;justify-content:center;
 }
-.brain-bubble::after {
-  content: '';
-  position: absolute; inset: -14px;
-  border-radius: 50%;
-  border: 2px dashed rgba(96,165,250,.2);
-  animation: spin 20s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+.byte-av svg{width:16px;height:16px;color:#fff;}
+.byte-meta{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--blue-ac);margin-bottom:4px;}
+.byte-txt{font-size:clamp(12px,1.9vw,14px);color:rgba(255,255,255,.72);line-height:1.7;}
+.byte-txt strong{font-family:var(--fm);font-size:.9em;background:rgba(96,165,250,.12);padding:1px 5px;border-radius:3px;color:var(--blue-ac);}
 
-.teaser-box {
-  background: linear-gradient(135deg, rgba(37,99,235,.15), rgba(6,182,212,.1));
-  border: 1.5px solid rgba(96,165,250,.3);
-  border-radius: var(--r);
-  padding: clamp(14px,2.5vw,22px) clamp(18px,3vw,30px);
-  max-width: 680px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 0 40px rgba(37,99,235,.12);
+/* ─────────────────────────────────────────────────────
+   TEASER BOX
+───────────────────────────────────────────────────── */
+.teaser{
+  background:linear-gradient(135deg,rgba(26,86,219,.15),rgba(6,182,212,.09));
+  border:1.5px solid rgba(96,165,250,.28);border-radius:var(--r);
+  padding:clamp(14px,2.3vw,22px) clamp(18px,3vw,28px);
+  max-width:660px;width:100%;text-align:center;
 }
-.teaser-box .tb-label {
-  font-family: var(--fm);
-  font-size: clamp(9px, 1.5vw, 11px);
-  letter-spacing: 3px;
-  color: var(--blue-ac);
-  margin-bottom: 8px;
-}
-.teaser-box .tb-q {
-  font-size: clamp(14px, 2.5vw, 19px);
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1.6;
-}
-.teaser-box .tb-q .hl { color: #FCD34D; }
+.teaser .t-lbl{font-family:var(--fm);font-size:clamp(9px,1.4vw,10px);letter-spacing:3px;color:var(--blue-ac);margin-bottom:8px;}
+.teaser .t-q{font-size:clamp(14px,2.4vw,18px);font-weight:700;color:var(--white);line-height:1.65;}
+.t-q .ac{color:var(--blue-ac);}
+.t-q .gd{color:#FCD34D;}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 2 — Byte's Analogy
-════════════════════════════════════════════════════ */
-.analogy-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  width: 100%;
-  max-width: 820px;
+/* ─────────────────────────────────────────────────────
+   PRO-TIP STRIP
+───────────────────────────────────────────────────── */
+.pro-tip{
+  background:rgba(253,186,36,.07);
+  border:1px solid rgba(253,186,36,.22);border-radius:var(--r-sm);
+  padding:clamp(9px,1.5vw,13px) clamp(14px,2vw,20px);
+  font-size:clamp(11px,1.8vw,13px);font-weight:700;color:rgba(255,255,255,.82);
+  display:flex;align-items:center;gap:10px;width:100%;max-width:860px;
 }
-@media (max-width: 600px) {
-  .analogy-grid { grid-template-columns: 1fr; gap: 12px; }
-}
-.analogy-card {
-  border-radius: var(--r);
-  padding: clamp(16px,2.5vw,24px);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  overflow: hidden;
-}
-.analogy-card::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: rgba(255,255,255,.02);
-  pointer-events: none;
-}
-.hw-card { background: rgba(37,99,235,.18); border: 2px solid rgba(96,165,250,.35); }
-.sw-card { background: rgba(124,58,237,.18); border: 2px solid rgba(167,139,250,.35); }
-.ac-icon  { font-size: clamp(28px,5vw,40px); }
-.ac-badge {
-  font-family: var(--fm); font-size: clamp(9px,1.5vw,11px);
-  font-weight: 700; letter-spacing: 2px;
-  padding: 4px 12px; border-radius: 100px; width: fit-content;
-}
-.hw-card .ac-badge { background: rgba(96,165,250,.15); color: var(--blue-ac); border: 1px solid rgba(96,165,250,.3); }
-.sw-card .ac-badge { background: rgba(167,139,250,.15); color: var(--purple-ac); border: 1px solid rgba(167,139,250,.3); }
-.ac-title { font-size: clamp(17px,3vw,24px); font-weight: 900; color: var(--white); }
-.hw-card .ac-title { color: var(--blue-ac); }
-.sw-card .ac-title { color: var(--purple-ac); }
-.ac-desc { font-size: clamp(12px,2vw,15px); color: rgba(255,255,255,.7); line-height: 1.7; }
-.byte-intro-row {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: var(--r-sm);
-  padding: 14px 18px;
-  max-width: 820px; width: 100%;
-}
-.byte-av-sm {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #1D4ED8, #3B82F6);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.byte-intro-row .bi-lbl { font-family: var(--fm); font-size: 9px; letter-spacing: 2px; color: var(--blue-ac); margin-bottom: 4px; }
-.byte-intro-row .bi-txt { font-size: clamp(12px,2vw,14px); color: rgba(255,255,255,.75); line-height: 1.7; }
+.pt-ic svg{width:clamp(16px,2.6vw,20px);height:clamp(16px,2.6vw,20px);color:#FCD34D;flex-shrink:0;}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 3 — Hardware Grid
-════════════════════════════════════════════════════ */
-.hw-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(8px, 1.5vw, 14px);
-  width: 100%;
-  max-width: 860px;
+/* ─────────────────────────────────────────────────────
+   HW IMAGE GRID
+───────────────────────────────────────────────────── */
+.hw-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:clamp(7px,1.3vw,12px);width:100%;max-width:860px;
 }
-@media (max-width: 600px) {
-  .hw-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+@media(max-width:540px){.hw-grid{grid-template-columns:1fr 1fr;}}
+.hw-item{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r);overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:border-color .2s,transform .2s;
 }
-.hw-card-item {
-  background: rgba(255,255,255,.06);
-  border: 1.5px solid rgba(255,255,255,.1);
-  border-radius: var(--r);
-  overflow: hidden;
-  display: flex; flex-direction: column;
-  transition: border-color .2s, transform .2s;
-}
-.hw-card-item:hover { border-color: var(--blue-ac); transform: translateY(-3px); }
-.hw-img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  display: block;
-  background: rgba(37,99,235,.1);
-  transition: transform .3s;
-}
-.hw-card-item:hover .hw-img { transform: scale(1.04); }
-.hw-info {
-  padding: clamp(8px,1.5vw,12px);
-}
-.hw-name { font-size: clamp(11px,2vw,14px); font-weight: 800; color: var(--white); margin-bottom: 3px; }
-.hw-desc { font-size: clamp(10px,1.5vw,12px); color: rgba(255,255,255,.45); line-height: 1.4; }
+.hw-item:hover{border-color:rgba(96,165,250,.4);transform:translateY(-2px);}
+.hw-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:rgba(26,86,219,.1);}
+.hw-cap{padding:8px 10px;}
+.hw-name{font-size:clamp(10px,1.7vw,13px);font-weight:800;color:var(--white);margin-bottom:2px;}
+.hw-sub{font-size:clamp(9px,1.4vw,11px);color:rgba(255,255,255,.42);}
 
-.pro-tip-capsule {
-  background: linear-gradient(135deg, rgba(251,191,36,.12), rgba(245,158,11,.08));
-  border: 1.5px solid rgba(251,191,36,.3);
-  border-radius: var(--r-sm);
-  padding: clamp(9px,1.5vw,13px) clamp(14px,2vw,20px);
-  font-size: clamp(11px,2vw,13.5px);
-  font-weight: 700;
-  color: rgba(255,255,255,.85);
-  display: flex; align-items: center; gap: 10px;
-  width: 100%; max-width: 860px;
-  line-height: 1.5;
+/* ─────────────────────────────────────────────────────
+   SW SECTION
+───────────────────────────────────────────────────── */
+.sw-pill{
+  font-family:var(--fm);font-size:clamp(9px,1.4vw,11px);
+  letter-spacing:2px;font-weight:700;padding:4px 14px;
+  border-radius:100px;width:fit-content;margin-bottom:6px;
 }
-.ptc-ico { font-size: clamp(16px,3vw,20px); flex-shrink: 0; }
+.sw-grid{display:flex;flex-wrap:wrap;gap:clamp(7px,1.2vw,11px);justify-content:center;width:100%;max-width:820px;}
+.sw-item{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);
+  border-radius:var(--r);padding:clamp(11px,1.9vw,17px) clamp(13px,2.2vw,20px);
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  min-width:clamp(90px,14vw,130px);flex:1;max-width:150px;text-align:center;
+  transition:border-color .2s,transform .2s;
+}
+.sw-item:hover{border-color:rgba(167,139,250,.38);transform:translateY(-2px);}
+.sw-ico svg{width:clamp(22px,4vw,30px);height:clamp(22px,4vw,30px);}
+.sw-name{font-size:clamp(11px,1.8vw,14px);font-weight:800;color:var(--white);}
+.sw-type{font-size:clamp(9px,1.3vw,11px);color:rgba(255,255,255,.38);}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 4 — Software Cloud
-════════════════════════════════════════════════════ */
-.sw-section-label {
-  font-family: var(--fm);
-  font-size: clamp(9px,1.5vw,11px);
-  letter-spacing: 3px;
-  padding: 4px 14px;
-  border-radius: 100px;
-  font-weight: 700;
-  width: fit-content;
+/* ─────────────────────────────────────────────────────
+   DIAGRAM: HW/SW INTEGRATION
+───────────────────────────────────────────────────── */
+.diag-wrap{
+  display:flex;width:100%;max-width:860px;
+  border-radius:var(--r);overflow:hidden;
+  border:1px solid rgba(255,255,255,.09);
 }
-.sw-grid {
-  display: flex; flex-wrap: wrap; gap: clamp(8px,1.5vw,12px);
-  justify-content: center;
-  width: 100%;
-  max-width: 820px;
+@media(max-width:620px){.diag-wrap{flex-direction:column;}}
+.diag-col{
+  flex:1;padding:clamp(13px,2.2vw,20px);
+  display:flex;flex-direction:column;gap:8px;
 }
-.sw-card-item {
-  background: rgba(255,255,255,.07);
-  border: 1.5px solid rgba(255,255,255,.12);
-  border-radius: var(--r);
-  padding: clamp(12px,2vw,18px) clamp(14px,2.5vw,22px);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  min-width: clamp(100px,16vw,140px);
-  flex: 1;
-  max-width: 160px;
-  text-align: center;
-  transition: border-color .2s, transform .2s;
-  cursor: default;
+.diag-col.hw{background:rgba(26,86,219,.13);border-left:1px solid rgba(96,165,250,.18);}
+.diag-col.sw{background:rgba(124,58,237,.1);border-right:1px solid rgba(167,139,250,.18);}
+.diag-lbl{font-family:var(--fm);font-size:clamp(8px,1.3vw,10px);letter-spacing:2px;font-weight:700;margin-bottom:4px;}
+.diag-col.hw .diag-lbl{color:var(--blue-ac);}
+.diag-col.sw .diag-lbl{color:var(--purple-ac);}
+.diag-row{
+  background:rgba(255,255,255,.07);border-radius:var(--r-xs);
+  padding:7px 11px;font-size:clamp(10px,1.7vw,12.5px);font-weight:700;
+  color:rgba(255,255,255,.78);display:flex;align-items:center;gap:7px;
 }
-.sw-card-item:hover { border-color: var(--purple-ac); transform: translateY(-3px); }
-.sw-icon { font-size: clamp(28px,5vw,36px); }
-.sw-name { font-size: clamp(12px,2vw,15px); font-weight: 800; color: var(--white); }
-.sw-type { font-size: clamp(10px,1.5vw,12px); color: rgba(255,255,255,.4); }
+.diag-row svg{width:14px;height:14px;flex-shrink:0;}
+.diag-mid{
+  flex:0 0 clamp(100px,16vw,160px);background:rgba(6,182,212,.07);
+  border-left:1px solid rgba(6,182,212,.18);border-right:1px solid rgba(6,182,212,.18);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;padding:14px 10px;text-align:center;
+}
+.diag-mid svg{width:clamp(20px,3.5vw,28px);height:clamp(20px,3.5vw,28px);color:var(--cyan);
+  animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.14);opacity:1}}
+.diag-mid-lbl{font-family:var(--fm);font-size:clamp(8px,1.3vw,9px);letter-spacing:2px;color:var(--cyan);}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 5 — Master Diagram / OS
-════════════════════════════════════════════════════ */
-.diagram-wrap {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  width: 100%;
-  max-width: 880px;
-  border-radius: var(--r);
-  overflow: hidden;
-  border: 1.5px solid rgba(255,255,255,.1);
-  position: relative;
+.os-card{
+  background:linear-gradient(135deg,rgba(6,182,212,.16),rgba(13,148,136,.1));
+  border:2px solid rgba(6,182,212,.35);border-radius:var(--r);
+  padding:clamp(13px,2.2vw,20px);width:100%;max-width:860px;
 }
-@media (max-width: 700px) {
-  .diagram-wrap { flex-direction: column; }
-  .diag-center { flex-direction: row !important; border-left:none!important; border-right:none!important; border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); padding: 12px 20px; justify-content: center; }
-  .diag-center .dc-arrow { transform: rotate(90deg) !important; }
-}
-.diag-side {
-  flex: 1;
-  padding: clamp(14px,2.5vw,24px);
-  display: flex; flex-direction: column; gap: 10px;
-}
-.diag-hw { background: rgba(37,99,235,.15); border-left: 1px solid rgba(96,165,250,.2); }
-.diag-sw { background: rgba(124,58,237,.12); border-right: 1px solid rgba(167,139,250,.2); }
-.diag-side-label {
-  font-family: var(--fm); font-size: clamp(9px,1.5vw,11px); letter-spacing: 2px; font-weight: 700; margin-bottom: 4px;
-}
-.diag-hw .diag-side-label { color: var(--blue-ac); }
-.diag-sw .diag-side-label { color: var(--purple-ac); }
-.diag-item {
-  background: rgba(255,255,255,.07);
-  border-radius: var(--r-sm);
-  padding: 8px 12px;
-  font-size: clamp(11px,2vw,13px);
-  font-weight: 700;
-  color: rgba(255,255,255,.8);
-  display: flex; align-items: center; gap: 8px;
-}
-.di-ico { font-size: clamp(14px,2.5vw,18px); flex-shrink: 0; }
-
-.diag-center {
-  flex: 0 0 clamp(120px,20vw,180px);
-  background: rgba(6,182,212,.08);
-  border-left: 1px solid rgba(6,182,212,.2);
-  border-right: 1px solid rgba(6,182,212,.2);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 8px; padding: 16px 12px; text-align: center;
-}
-.dc-arrow {
-  font-size: clamp(24px,5vw,36px);
-  animation: pulse-arrow 1.5s ease-in-out infinite;
-}
-@keyframes pulse-arrow {
-  0%,100% { transform: scale(1); opacity:.7; }
-  50%      { transform: scale(1.15); opacity:1; }
-}
-.dc-label { font-family: var(--fm); font-size: clamp(8px,1.4vw,10px); letter-spacing: 2px; color: var(--cyan); }
-
-.os-reveal-card {
-  background: linear-gradient(135deg, rgba(6,182,212,.18), rgba(13,148,136,.12));
-  border: 2px solid rgba(6,182,212,.4);
-  border-radius: var(--r);
-  padding: clamp(14px,2.5vw,22px);
-  width: 100%; max-width: 880px;
-  box-shadow: 0 0 40px rgba(6,182,212,.12);
-}
-.os-reveal-card .or-label { font-family: var(--fm); font-size: clamp(9px,1.5vw,11px); letter-spacing: 3px; color: var(--cyan); margin-bottom: 8px; }
-.os-reveal-card .or-title { font-size: clamp(17px,3vw,24px); font-weight: 900; color: var(--white); margin-bottom: 8px; }
-.os-reveal-card .or-body  { font-size: clamp(12px,2vw,15px); color: rgba(255,255,255,.72); line-height: 1.7; }
-.os-examples {
-  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
-}
-.os-pill {
-  background: rgba(6,182,212,.15); border: 1px solid rgba(6,182,212,.3);
-  border-radius: 100px; padding: 4px 14px;
-  font-family: var(--fm); font-size: clamp(10px,1.8vw,12px); font-weight: 700;
-  color: var(--cyan);
+.os-card .oc-lbl{font-family:var(--fm);font-size:clamp(9px,1.4vw,10px);letter-spacing:3px;color:var(--cyan);margin-bottom:6px;}
+.os-card .oc-title{font-family:var(--fh);font-size:clamp(16px,2.8vw,22px);font-weight:800;color:var(--white);margin-bottom:7px;}
+.os-card .oc-body{font-size:clamp(11px,1.8vw,14px);color:rgba(255,255,255,.7);line-height:1.7;}
+.os-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
+.os-pill{
+  background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.28);
+  border-radius:100px;padding:4px 13px;
+  font-family:var(--fm);font-size:clamp(9px,1.5vw,11px);font-weight:700;color:var(--cyan);
 }
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 6 — Dictionary
-════════════════════════════════════════════════════ */
-.dict-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(170px, 28vw, 220px), 1fr));
-  gap: clamp(8px,1.5vw,12px);
-  width: 100%;
-  max-width: 840px;
+/* ─────────────────────────────────────────────────────
+   DICT GRID
+───────────────────────────────────────────────────── */
+.dict-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(clamp(155px,25vw,200px),1fr));
+  gap:clamp(8px,1.3vw,11px);width:100%;max-width:860px;
 }
-.dict-item {
-  background: rgba(255,255,255,.06);
-  border: 1.5px solid rgba(255,255,255,.1);
-  border-radius: var(--r-sm);
-  padding: clamp(12px,2vw,16px);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.dict-item{
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-sm);padding:clamp(11px,1.8vw,15px);
+  display:flex;flex-direction:column;gap:5px;
 }
-.di-num  { font-family: var(--fm); font-size: clamp(9px,1.5vw,11px); color: rgba(255,255,255,.25); }
-.di-en   { font-family: var(--fm); font-size: clamp(13px,2.2vw,16px); font-weight: 700; color: var(--blue-ac); }
-.di-arrow{ color: rgba(255,255,255,.25); font-size: 14px; }
-.di-ar   { font-size: clamp(12px,2vw,14px); font-weight: 700; color: rgba(255,255,255,.8);
-           background: rgba(96,165,250,.1); border: 1px solid rgba(96,165,250,.2);
-           border-radius: 100px; padding: 3px 12px; width: fit-content; }
+.di-n{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.22);}
+.di-en{font-family:var(--fm);font-size:clamp(12px,2vw,15px);font-weight:700;color:var(--blue-ac);}
+.di-sep{color:rgba(255,255,255,.2);font-size:12px;}
+.di-ar{
+  font-size:clamp(11px,1.7vw,13px);font-weight:700;color:rgba(255,255,255,.8);
+  background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);
+  border-radius:100px;padding:3px 11px;width:fit-content;
+}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 7 — The Lab / Sorting Game
-════════════════════════════════════════════════════ */
-.lab-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(10px,2vw,18px);
-  width: 100%;
-  max-width: 860px;
+/* ─────────────────────────────────────────────────────
+   LAB SORT GAME
+───────────────────────────────────────────────────── */
+.buckets{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(10px,1.8vw,16px);width:100%;max-width:860px;
 }
-@media (max-width: 600px) {
-  .lab-layout { grid-template-columns: 1fr; gap: 10px; }
+@media(max-width:500px){.buckets{grid-template-columns:1fr;}}
+.bucket{
+  border-radius:var(--r);padding:clamp(11px,1.9vw,17px);
+  min-height:clamp(110px,18vw,150px);
+  display:flex;flex-direction:column;gap:7px;
 }
-.lab-bucket {
-  border-radius: var(--r);
-  padding: clamp(12px,2vw,18px);
-  min-height: clamp(120px,20vw,160px);
-  display: flex; flex-direction: column; gap: 8px;
+.bkt-hw{background:rgba(26,86,219,.11);border:2px solid rgba(96,165,250,.26);}
+.bkt-sw{background:rgba(124,58,237,.11);border:2px solid rgba(167,139,250,.26);}
+.bkt-lbl{
+  font-family:var(--fm);font-size:clamp(9px,1.4vw,10px);
+  letter-spacing:2px;font-weight:700;display:flex;align-items:center;gap:6px;
 }
-.bucket-hw { background: rgba(37,99,235,.12); border: 2px solid rgba(96,165,250,.3); }
-.bucket-sw { background: rgba(124,58,237,.12); border: 2px solid rgba(167,139,250,.3); }
-.bucket-label {
-  font-family: var(--fm); font-size: clamp(9px,1.5vw,11px); letter-spacing: 2px; font-weight: 700;
-  display: flex; align-items: center; gap: 6px;
+.bkt-hw .bkt-lbl{color:var(--blue-ac);}
+.bkt-sw .bkt-lbl{color:var(--purple-ac);}
+.bkt-items{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;}
+.b-chip{
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
+  border-radius:100px;padding:4px 11px;
+  font-size:clamp(10px,1.7vw,12px);font-weight:700;color:var(--white);
+  animation:chipIn .3s cubic-bezier(.22,1,.36,1) both;
 }
-.bucket-hw .bucket-label { color: var(--blue-ac); }
-.bucket-sw .bucket-label { color: var(--purple-ac); }
-.bucket-items { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.b-tag {
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-  border-radius: 100px; padding: 4px 12px;
-  font-size: clamp(10px,1.8vw,13px); font-weight: 700; color: var(--white);
-  animation: tagPop .35s cubic-bezier(.22,1,.36,1) forwards;
+@keyframes chipIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.b-chip.hw{background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.28);color:var(--blue-ac);}
+.b-chip.sw{background:rgba(167,139,250,.14);border-color:rgba(167,139,250,.28);color:var(--purple-ac);}
+.chal-wrap{display:flex;flex-wrap:wrap;gap:clamp(5px,1.2vw,9px);justify-content:center;width:100%;max-width:860px;}
+.chal-btn{
+  background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);
+  border-radius:var(--r-sm);padding:clamp(8px,1.6vw,12px) clamp(11px,1.9vw,16px);
+  font-family:var(--fb);font-size:clamp(11px,1.8vw,14px);font-weight:800;color:var(--white);
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
-@keyframes tagPop {
-  from { opacity:0; transform: scale(.7); }
-  to   { opacity:1; transform: scale(1); }
+.chal-btn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);}
+.chal-btn.hw{background:rgba(96,165,250,.14);border-color:var(--blue-ac);color:var(--blue-ac);}
+.chal-btn.sw{background:rgba(167,139,250,.14);border-color:var(--purple-ac);color:var(--purple-ac);}
+.chal-btn svg{width:14px;height:14px;}
+.chal-badge{
+  font-family:var(--fm);font-size:9px;letter-spacing:.5px;font-weight:700;
+  padding:2px 7px;border-radius:100px;opacity:0;transition:opacity .18s;
 }
-.b-tag.hw-tag { background: rgba(96,165,250,.15); border-color: rgba(96,165,250,.3); color: var(--blue-ac); }
-.b-tag.sw-tag { background: rgba(167,139,250,.15); border-color: rgba(167,139,250,.3); color: var(--purple-ac); }
+.chal-btn.hw .chal-badge{background:rgba(96,165,250,.2);color:var(--blue-ac);border:1px solid rgba(96,165,250,.3);opacity:1;}
+.chal-btn.sw .chal-badge{background:rgba(167,139,250,.2);color:var(--purple-ac);border:1px solid rgba(167,139,250,.3);opacity:1;}
 
-.challenge-grid {
-  display: flex; flex-wrap: wrap; gap: clamp(6px,1.5vw,10px);
-  justify-content: center;
-  width: 100%; max-width: 860px;
+/* ─────────────────────────────────────────────────────
+   QUIZ ENGINE
+───────────────────────────────────────────────────── */
+.quiz-wrap{display:flex;flex-direction:column;gap:clamp(9px,1.5vw,13px);width:100%;max-width:780px;}
+.q-stem{
+  font-family:var(--fh);font-size:clamp(15px,2.7vw,22px);font-weight:800;
+  color:var(--white);text-align:center;line-height:1.4;
+  background:rgba(255,255,255,.05);border-radius:var(--r);
+  padding:clamp(12px,2vw,18px);border:1px solid rgba(255,255,255,.09);
 }
-.chal-card {
-  background: rgba(255,255,255,.08);
-  border: 2px solid rgba(255,255,255,.15);
-  border-radius: var(--r-sm);
-  padding: clamp(9px,1.8vw,13px) clamp(12px,2vw,18px);
-  font-size: clamp(12px,2vw,15px); font-weight: 800; color: var(--white);
-  cursor: pointer;
-  transition: all .22s;
-  display: flex; align-items: center; gap: 8px;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+.q-stem .ac{color:var(--blue-ac);}
+.q-opts{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.2vw,10px);}
+@media(max-width:500px){.q-opts{grid-template-columns:1fr;}}
+.q-opt{
+  background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.13);
+  border-radius:var(--r-sm);padding:clamp(10px,1.8vw,15px);
+  font-family:var(--fb);font-size:clamp(12px,2vw,15px);font-weight:700;color:var(--white);
+  cursor:pointer;display:flex;align-items:center;gap:9px;text-align:right;
+  transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
-.chal-card:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.35); transform: translateY(-2px); }
-.chal-card.revealed-hw { background: rgba(96,165,250,.15); border-color: var(--blue-ac); color: var(--blue-ac); }
-.chal-card.revealed-sw { background: rgba(167,139,250,.15); border-color: var(--purple-ac); color: var(--purple-ac); }
-.chal-card .cc-ico { font-size: clamp(16px,3vw,20px); }
-.chal-card .cc-badge {
-  font-family: var(--fm); font-size: clamp(8px,1.4vw,10px); letter-spacing: 1px; font-weight: 700;
-  padding: 2px 8px; border-radius: 100px; font-size: 9px;
-  opacity: 0; transition: opacity .2s;
+.q-opt:hover{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3);}
+.q-opt .ql{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  border:2px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:12px;font-weight:700;
+  transition:all .18s;
 }
-.chal-card.revealed-hw .cc-badge { background: rgba(96,165,250,.2); color: var(--blue-ac); border: 1px solid rgba(96,165,250,.3); opacity: 1; }
-.chal-card.revealed-sw .cc-badge { background: rgba(167,139,250,.2); color: var(--purple-ac); border: 1px solid rgba(167,139,250,.3); opacity: 1; }
+/* correct */
+.q-opt.correct{
+  background:rgba(34,197,94,.12)!important;
+  border-color:var(--green-ac)!important;
+  color:var(--green-ac)!important;
+  animation:glowGreen .5s ease;
+}
+.q-opt.correct .ql{background:var(--green-ac);border-color:var(--green-ac);color:#fff;}
+@keyframes glowGreen{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}
+  70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
+  100%{box-shadow:none}
+}
+/* wrong */
+.q-opt.wrong{
+  background:rgba(239,68,68,.1)!important;
+  border-color:var(--red-ac)!important;
+  color:#FCA5A5!important;
+  animation:shakeIt .4s ease;
+}
+.q-opt.wrong .ql{background:var(--red-ac);border-color:var(--red-ac);color:#fff;}
+@keyframes shakeIt{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+.q-opt.locked{cursor:default;pointer-events:none;}
 
-/* ════════════════════════════════════════════════════
-   ► SLIDE 8 — IPO Intro
-════════════════════════════════════════════════════ */
-.ipo-analogy {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: clamp(10px,2vw,20px);
-  align-items: center;
-  width: 100%; max-width: 820px;
+.q-fb{
+  border-radius:var(--r-sm);padding:clamp(10px,1.7vw,14px) clamp(14px,2.2vw,20px);
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:clamp(12px,1.8vw,14px);font-weight:600;line-height:1.7;
 }
-@media (max-width: 600px) {
-  .ipo-analogy { grid-template-columns: 1fr; gap: 10px; }
-  .ipo-vs-ico  { transform: rotate(90deg); }
-}
-.ipo-side {
-  border-radius: var(--r);
-  padding: clamp(14px,2.5vw,22px);
-  text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-}
-.ipo-human { background: rgba(16,185,129,.12); border: 1.5px solid rgba(52,211,153,.3); }
-.ipo-cpu   { background: rgba(37,99,235,.12); border: 1.5px solid rgba(96,165,250,.3); }
-.ipo-side-ico { font-size: clamp(32px,6vw,48px); }
-.ipo-side-title { font-size: clamp(15px,2.5vw,20px); font-weight: 900; color: var(--white); }
-.ipo-steps { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-.ipo-step-row {
-  border-radius: var(--r-sm);
-  padding: 8px 12px;
-  font-size: clamp(11px,2vw,14px);
-  font-weight: 700;
-  display: flex; align-items: center; gap: 8px;
-}
-.ipo-step-in  { background: rgba(96,165,250,.12); border: 1px solid rgba(96,165,250,.2); color: var(--blue-ac); }
-.ipo-step-pr  { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.2); color: #FCD34D; }
-.ipo-step-out { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.2); color: var(--green-ac); }
-.ipo-vs-ico   { font-size: clamp(24px,5vw,36px); color: rgba(255,255,255,.25); flex-shrink: 0; }
+.q-fb.good{background:rgba(34,197,94,.1);border:1.5px solid rgba(34,197,94,.28);color:#86EFAC;}
+.q-fb.bad{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);color:#FCA5A5;}
+.q-fb svg{width:20px;height:20px;flex-shrink:0;margin-top:1px;}
 
-/* ════════════════════════════════════════════════════
-   UTILITY
-════════════════════════════════════════════════════ */
-.full-w { width: 100%; max-width: 860px; }
-.text-center { text-align: center; }
+.score-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;width:100%;max-width:780px;overflow:hidden;}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--blue-2),var(--blue-3));border-radius:2px;transition:width .5s ease;}
+
+/* ─────────────────────────────────────────────────────
+   IPO ANALOGY (last slide teaser)
+───────────────────────────────────────────────────── */
+.ipo-wrap{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:clamp(10px,1.8vw,18px);align-items:center;
+  width:100%;max-width:800px;
+}
+@media(max-width:560px){
+  .ipo-wrap{grid-template-columns:1fr;gap:9px;}
+  .ipo-eq{transform:rotate(90deg);}
+}
+.ipo-side{
+  border-radius:var(--r);padding:clamp(13px,2.2vw,20px);
+  text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;
+}
+.ipo-human{background:rgba(22,163,74,.1);border:1.5px solid rgba(34,197,94,.25);}
+.ipo-cpu  {background:rgba(26,86,219,.1);border:1.5px solid rgba(96,165,250,.25);}
+.ipo-ic   {font-size:clamp(26px,5vw,40px);}
+.ipo-ic svg{width:clamp(26px,5vw,40px);height:clamp(26px,5vw,40px);}
+.ipo-title{font-family:var(--fh);font-size:clamp(14px,2.3vw,19px);font-weight:900;color:var(--white);}
+.ipo-steps{display:flex;flex-direction:column;gap:5px;width:100%;}
+.ipo-step{
+  border-radius:var(--r-xs);padding:7px 11px;
+  font-size:clamp(10px,1.7vw,13px);font-weight:700;
+  display:flex;align-items:center;gap:7px;
+}
+.ipo-step svg{width:13px;height:13px;flex-shrink:0;}
+.ipo-in {background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.18);color:var(--blue-ac);}
+.ipo-pr {background:rgba(253,186,36,.08);border:1px solid rgba(253,186,36,.18);color:#FCD34D;}
+.ipo-out{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18);color:var(--green-ac);}
+.ipo-eq{font-family:var(--fm);font-size:clamp(20px,3.5vw,30px);color:rgba(255,255,255,.22);flex-shrink:0;}
 </style>
 </head>
 <body>
 
-<!-- ──────────── DECK ──────────── -->
-<div id="deck">
+<!-- ════════ VIEWPORT ════════ -->
+<div id="viewport">
 
-  <!-- ╔═══════════════════════════════════╗
-       ║  S1 · Title & Brain Teaser        ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide active" id="s1" data-steps="1">
-    <div class="slide-header">
-      <div class="s-tag">CH.01 · BLUE · Lesson 1.2</div>
-      <div class="s-num"><span>01</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="brain-bubble">🧠</div>
-
-      <div class="mono-tag">الجسد والروح · BODY & SOUL</div>
-
-      <div class="slide-title">
-        <span class="hl">Hardware</span> و <span class="gold">Software</span><br>
-        الجسم والروح!
-      </div>
-
-      <div class="slide-sub">
-        الكمبيوتر زي الإنسان بالظبط —<br>
-        عنده جسد ملموس وروح رقمية
-      </div>
-
-      <div class="teaser-box step" id="s1-step0">
-        <div class="tb-label">🧠 BRAIN TEASER · حيّر دماغك</div>
-        <div class="tb-q">
-          لو عندك جهاز كمبيوتر بدون Windows أو أي برنامج —
-          <span class="hl">تقدر تعمل بيه إيه؟</span><br>
-          فكّر قبل ما تكمّل!
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s1-sp0"></div>
+  <!-- ══ S01 · Lesson 1.2 · Title ══ -->
+  <div class="slide active" id="s01" data-steps="1">
+    <div class="s-head"><div class="s-tag">CH.01 · L 1.2 · BODY &amp; SOUL</div><div class="s-ctr"><span>01</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">LESSON 1.2 · الجسد والروح</div>
+      <div class="s-title"><span class="ac">Hardware</span> و<span class="gd">Software</span><br>الجسم والروح!</div>
+      <div class="s-sub">الكمبيوتر زي الإنسان — عنده جسد ملموس وروح رقمية</div>
+      <div class="teaser step" id="s01-t0">
+        <div class="t-lbl">BRAIN TEASER · حيّر دماغك</div>
+        <div class="t-q">لو عندك جهاز كمبيوتر بدون Windows أو أي برنامج —<br><span class="ac">تقدر تعمل بيه إيه؟</span></div>
       </div>
     </div>
-  </div><!-- /s1 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S2 · Byte's Analogy              ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s2" data-steps="2">
-    <div class="slide-header">
-      <div class="s-tag">تشبيه بايت العبقري</div>
-      <div class="s-num"><span>02</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="byte-intro-row">
-        <div class="byte-av-sm">🤖</div>
-        <div>
-          <div class="bi-lbl">BYTE SAYS · بايت بيقول</div>
-          <div class="bi-txt">تخيّل الكمبيوتر زي إنسان — الـ Hardware هو الجسم، والـ Software هو العقل. من غير بعض مش كمبيوتر!</div>
-        </div>
-      </div>
-
-      <div class="analogy-grid">
-        <div class="analogy-card hw-card step" id="s2-step0">
-          <div class="ac-icon">🔩</div>
-          <div class="ac-badge">HARDWARE</div>
-          <div class="ac-title">الجسد الملموس</div>
-          <div class="ac-desc">
-            (اليدين، الدماغ، القلب)
-            <br>من غيره السوفتوير ملوش مكان يعيش فيه!
-          </div>
-        </div>
-
-        <div class="analogy-card sw-card step" id="s2-step1">
-          <div class="ac-icon">💿</div>
-          <div class="ac-badge">SOFTWARE</div>
-          <div class="ac-title">الروح والعقل</div>
-          <div class="ac-desc">
-            (الأفكار، المشاعر، القرارات)
-            <br>من غيره الهاردوير مجرد علبة حديد!
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s2-sp0"></div>
-        <div class="sp-dot" id="s2-sp1"></div>
-      </div>
-    </div>
-  </div><!-- /s2 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S3 · Hardware Grid               ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s3" data-steps="2">
-    <div class="slide-header">
-      <div class="s-tag">مملكة الهاردوير 🔩</div>
-      <div class="s-num"><span>03</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="pro-tip-capsule">
-        <div class="ptc-ico">💡</div>
-        <div>أسهل طريقة تتذكر: لو ممكن تودّيه على السيرفيس والتصليح = <strong>Hardware!</strong></div>
-      </div>
-
-      <div class="hw-grid">
-        <!-- Row 1 — step 0 -->
-        <div class="hw-card-item step" id="s3-step0a">
-          <img src="https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=400&q=80&auto=format&fit=crop" alt="CPU" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">CPU — المعالج</div>
-            <div class="hw-desc">دماغ الكمبيوتر</div>
-          </div>
-        </div>
-        <div class="hw-card-item step" id="s3-step0b">
-          <img src="https://images.unsplash.com/photo-1562976540-1502c2145186?w=400&q=80&auto=format&fit=crop" alt="RAM" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">RAM — الذاكرة</div>
-            <div class="hw-desc">المكتب المؤقت</div>
-          </div>
-        </div>
-        <div class="hw-card-item step" id="s3-step0c">
-          <img src="https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400&q=80&auto=format&fit=crop" alt="Hard Disk" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">Storage — التخزين</div>
-            <div class="hw-desc">الأرشيف الدائم</div>
-          </div>
-        </div>
-
-        <!-- Row 2 — step 1 -->
-        <div class="hw-card-item step" id="s3-step1a">
-          <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80&auto=format&fit=crop" alt="Monitor" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">Monitor — الشاشة</div>
-            <div class="hw-desc">بتعرض النتيجة</div>
-          </div>
-        </div>
-        <div class="hw-card-item step" id="s3-step1b">
-          <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80&auto=format&fit=crop" alt="Keyboard" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">Keyboard — كيبورد</div>
-            <div class="hw-desc">بتدخّل الأوامر</div>
-          </div>
-        </div>
-        <div class="hw-card-item step" id="s3-step1c">
-          <img src="https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&q=80&auto=format&fit=crop" alt="Mouse" class="hw-img" loading="lazy">
-          <div class="hw-info">
-            <div class="hw-name">Mouse — الماوس</div>
-            <div class="hw-desc">بيتحكم في المؤشر</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s3-sp0"></div>
-        <div class="sp-dot" id="s3-sp1"></div>
-      </div>
-    </div>
-  </div><!-- /s3 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S4 · Software Cloud              ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s4" data-steps="2">
-    <div class="slide-header">
-      <div class="s-tag">عالم السوفتوير 💿</div>
-      <div class="s-num"><span>04</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="pro-tip-capsule">
-        <div class="ptc-ico">💡</div>
-        <div>لو بتنزّله وتعمله <strong>Download</strong> من الإنترنت = <strong>Software!</strong></div>
-      </div>
-
-      <!-- OS — step 0 -->
-      <div class="step full-w" id="s4-step0" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div class="sw-section-label" style="background:rgba(37,99,235,.15);border:1px solid rgba(96,165,250,.3);color:var(--blue-ac);">
-          👑 Operating Systems — أنظمة التشغيل
-        </div>
-        <div class="sw-grid">
-          <div class="sw-card-item">
-            <div class="sw-icon">🪟</div>
-            <div class="sw-name">Windows</div>
-            <div class="sw-type">OS</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">🍎</div>
-            <div class="sw-name">macOS</div>
-            <div class="sw-type">OS</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">🤖</div>
-            <div class="sw-name">Android</div>
-            <div class="sw-type">OS</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">📱</div>
-            <div class="sw-name">iOS</div>
-            <div class="sw-type">OS</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Apps — step 1 -->
-      <div class="step full-w" id="s4-step1" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div class="sw-section-label" style="background:rgba(124,58,237,.15);border:1px solid rgba(167,139,250,.3);color:var(--purple-ac);">
-          🛠️ Applications & Tools — التطبيقات
-        </div>
-        <div class="sw-grid">
-          <div class="sw-card-item">
-            <div class="sw-icon">🌐</div>
-            <div class="sw-name">Chrome</div>
-            <div class="sw-type">Browser</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">📝</div>
-            <div class="sw-name">Word</div>
-            <div class="sw-type">Office</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">🎨</div>
-            <div class="sw-name">Photoshop</div>
-            <div class="sw-type">Design</div>
-          </div>
-          <div class="sw-card-item">
-            <div class="sw-icon">🎮</div>
-            <div class="sw-name">Games</div>
-            <div class="sw-type">Entertainment</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s4-sp0"></div>
-        <div class="sp-dot" id="s4-sp1"></div>
-      </div>
-    </div>
-  </div><!-- /s4 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S5 · Master Diagram / OS         ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s5" data-steps="1">
-    <div class="slide-header">
-      <div class="s-tag">المدير الكبير 👑</div>
-      <div class="s-num"><span>05</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="mono-tag">THE INTEGRATION DIAGRAM</div>
-      <div class="slide-title" style="font-size:clamp(20px,3.5vw,34px);">
-        كيف <span class="hl">Hardware</span> و <span class="gold">Software</span> بيتوحّدوا؟
-      </div>
-
-      <div class="diagram-wrap">
-        <!-- Hardware side -->
-        <div class="diag-side diag-hw">
-          <div class="diag-side-label">🔩 HARDWARE</div>
-          <div class="diag-item"><div class="di-ico">⚙️</div> CPU — المعالج</div>
-          <div class="diag-item"><div class="di-ico">💾</div> RAM — الذاكرة</div>
-          <div class="diag-item"><div class="di-ico">📦</div> Storage — التخزين</div>
-          <div class="diag-item"><div class="di-ico">🖥️</div> Monitor — الشاشة</div>
-        </div>
-        <!-- Center pulse -->
-        <div class="diag-center">
-          <div class="dc-label">BRIDGE</div>
-          <div class="dc-arrow">⇌</div>
-          <div class="dc-label" style="font-size:10px;color:rgba(255,255,255,.3);">OS</div>
-        </div>
-        <!-- Software side -->
-        <div class="diag-side diag-sw">
-          <div class="diag-side-label">💿 SOFTWARE</div>
-          <div class="diag-item"><div class="di-ico">👑</div> OS — نظام التشغيل</div>
-          <div class="diag-item"><div class="di-ico">🌐</div> Browser — المتصفح</div>
-          <div class="diag-item"><div class="di-ico">📝</div> Apps — التطبيقات</div>
-          <div class="diag-item"><div class="di-ico">🎮</div> Games — الألعاب</div>
-        </div>
-      </div>
-
-      <!-- OS reveal -->
-      <div class="os-reveal-card step" id="s5-step0">
-        <div class="or-label">👑 THE BIG BOSS — المدير الكبير</div>
-        <div class="or-title">Operating System (OS)</div>
-        <div class="or-body">
-          الـ OS هو برنامج بيشتغل فوق الـ Hardware مباشرةً، وبيدير كل البرامج التانية. هو الوسيط بينك وبين الجهاز — وبدونه ما فيش برنامج يشتغل!
-        </div>
-        <div class="os-examples">
-          <span class="os-pill">Windows</span>
-          <span class="os-pill">macOS</span>
-          <span class="os-pill">Linux</span>
-          <span class="os-pill">Android</span>
-          <span class="os-pill">iOS</span>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s5-sp0"></div>
-      </div>
-    </div>
-  </div><!-- /s5 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S6 · Visual Dictionary           ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s6" data-steps="6">
-    <div class="slide-header">
-      <div class="s-tag">قاموس الدرس الثاني 📖</div>
-      <div class="s-num"><span>06</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="mono-tag">BYTE'S VISUAL DICTIONARY</div>
-      <div class="slide-title" style="font-size:clamp(20px,3vw,30px);">قاموس بايت التقني</div>
-
-      <div class="dict-grid">
-        <div class="dict-item step" id="s6-step0">
-          <div class="di-num">01</div>
-          <div class="di-en">Hardware</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">عتاد مادي</div>
-        </div>
-        <div class="dict-item step" id="s6-step1">
-          <div class="di-num">02</div>
-          <div class="di-en">Software</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">برمجيات</div>
-        </div>
-        <div class="dict-item step" id="s6-step2">
-          <div class="di-num">03</div>
-          <div class="di-en">OS</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">المدير الكبير</div>
-        </div>
-        <div class="dict-item step" id="s6-step3">
-          <div class="di-num">04</div>
-          <div class="di-en">CPU</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">دماغ الكمبيوتر</div>
-        </div>
-        <div class="dict-item step" id="s6-step4">
-          <div class="di-num">05</div>
-          <div class="di-en">RAM</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">ذاكرة مؤقتة / المكتب</div>
-        </div>
-        <div class="dict-item step" id="s6-step5">
-          <div class="di-num">06</div>
-          <div class="di-en">Application</div>
-          <div class="di-arrow">←</div>
-          <div class="di-ar">تطبيق يخدم غرض معيّن</div>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s6-sp0"></div>
-        <div class="sp-dot" id="s6-sp1"></div>
-        <div class="sp-dot" id="s6-sp2"></div>
-        <div class="sp-dot" id="s6-sp3"></div>
-        <div class="sp-dot" id="s6-sp4"></div>
-        <div class="sp-dot" id="s6-sp5"></div>
-      </div>
-    </div>
-  </div><!-- /s6 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S7 · The Lab — Sorting Game      ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s7" data-steps="2">
-    <div class="slide-header">
-      <div class="s-tag">المختبر 🔬 · صنّف الأجهزة</div>
-      <div class="s-num"><span>07</span>/08</div>
-    </div>
-    <div class="slide-body" style="gap:10px;">
-
-      <!-- Buckets -->
-      <div class="lab-layout full-w">
-        <div class="lab-bucket bucket-hw">
-          <div class="bucket-label">🔩 Hardware</div>
-          <div class="bucket-items" id="hw-bucket">
-            <!-- filled by JS -->
-          </div>
-        </div>
-        <div class="lab-bucket bucket-sw">
-          <div class="bucket-label">💿 Software</div>
-          <div class="bucket-items" id="sw-bucket">
-            <!-- filled by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Solved example — step 0 -->
-      <div class="step full-w text-center" id="s7-step0">
-        <div style="font-family:var(--fm);font-size:clamp(9px,1.5vw,11px);letter-spacing:2px;color:rgba(255,255,255,.4);margin-bottom:8px;">✅ SOLVED EXAMPLE</div>
-        <div style="font-size:clamp(11px,2vw,13px);color:rgba(255,255,255,.6);">Screen → HW · Firefox → SW · RAM → HW · Python → SW</div>
-      </div>
-
-      <!-- Challenge — step 1 -->
-      <div class="step full-w" id="s7-step1" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="font-family:var(--fm);font-size:clamp(9px,1.5vw,11px);letter-spacing:2px;color:rgba(255,255,255,.4);">🤔 YOUR TURN — اضغط على كل كارت!</div>
-        <div class="challenge-grid" id="challenge-grid">
-          <!-- filled by JS -->
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s7-sp0"></div>
-        <div class="sp-dot" id="s7-sp1"></div>
-      </div>
-    </div>
-  </div><!-- /s7 -->
-
-
-  <!-- ╔═══════════════════════════════════╗
-       ║  S8 · Intro to IPO                ║
-       ╚═══════════════════════════════════╝ -->
-  <div class="slide" id="s8" data-steps="1">
-    <div class="slide-header">
-      <div class="s-tag">دورة العمليات الأربعة 🔄</div>
-      <div class="s-num"><span>08</span>/08</div>
-    </div>
-    <div class="slide-body">
-
-      <div class="mono-tag">TEASER · NEXT LESSON PREVIEW</div>
-      <div class="slide-title" style="font-size:clamp(20px,3.5vw,36px);">
-        الكمبيوتر بيعمل <span class="hl">نفس</span> اللي إنت بتعمله!
-      </div>
-
-      <div class="ipo-analogy">
-        <!-- Human side -->
-        <div class="ipo-side ipo-human">
-          <div class="ipo-side-ico">🧑</div>
-          <div class="ipo-side-title">الإنسان</div>
-          <div class="ipo-steps">
-            <div class="ipo-step-row ipo-step-in">🍕 أكل — Input</div>
-            <div class="ipo-step-row ipo-step-pr">🫀 هضم — Process</div>
-            <div class="ipo-step-row ipo-step-out">⚡ طاقة — Output</div>
-          </div>
-        </div>
-
-        <div class="ipo-vs-ico">=</div>
-
-        <!-- CPU side -->
-        <div class="ipo-side ipo-cpu">
-          <div class="ipo-side-ico">🤖</div>
-          <div class="ipo-side-title">الكمبيوتر</div>
-          <div class="ipo-steps">
-            <div class="ipo-step-row ipo-step-in">⌨️ كيبورد — Input</div>
-            <div class="ipo-step-row ipo-step-pr">⚙️ CPU — Process</div>
-            <div class="ipo-step-row ipo-step-out">🖥️ شاشة — Output</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Brain Teaser reveal -->
-      <div class="teaser-box step" id="s8-step0">
-        <div class="tb-label">🧠 BRAIN TEASER · حيّر دماغك</div>
-        <div class="tb-q">
-          لما بتاكل — بتدخّل أكل (<span class="hl">Input</span>)، جسمك بيعالجه (<span class="hl">Process</span>)، وبيطلع طاقة (<span class="hl">Output</span>).
-          <br>الكمبيوتر بيعمل نفس الحاجة بالظبط! <span class="gold">تفتكر إزّاي؟</span>
-        </div>
-      </div>
-
-    </div>
-    <div class="slide-foot">
-      <div class="foot-author">Zahra Essam</div>
-      <div class="step-progress">
-        <div class="sp-dot lit"></div>
-        <div class="sp-dot" id="s8-sp0"></div>
-      </div>
-    </div>
-  </div><!-- /s8 -->
-
-</div><!-- /deck -->
-
-
-<!-- ──────────── NAVIGATION BAR ──────────── -->
-<div id="nav">
-  <button class="nav-btn" id="btn-prev" disabled>◀ السابق</button>
-  <div id="progress-wrap">
-    <div class="prog-dot active" data-slide="0"></div>
-    <div class="prog-dot"        data-slide="1"></div>
-    <div class="prog-dot"        data-slide="2"></div>
-    <div class="prog-dot"        data-slide="3"></div>
-    <div class="prog-dot"        data-slide="4"></div>
-    <div class="prog-dot"        data-slide="5"></div>
-    <div class="prog-dot"        data-slide="6"></div>
-    <div class="prog-dot"        data-slide="7"></div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s01p0"></div></div></div>
   </div>
-  <button class="nav-btn" id="btn-next">التالي ▶</button>
+
+  <!-- ══ S02 · Byte's Analogy ══ -->
+  <div class="slide" id="s02" data-steps="2">
+    <div class="s-head"><div class="s-tag">BYTE'S ANALOGY · التشبيه</div><div class="s-ctr"><span>02</span>/14</div></div>
+    <div class="s-body">
+      <div class="byte-row fw">
+        <div class="byte-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="13" rx="3"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><path d="M9 17h6M12 6V3M10 3h4" stroke-linecap="round"/></svg></div>
+        <div><div class="byte-meta">BYTE SAYS · بايت بيقول</div><div class="byte-txt">الكمبيوتر زي الإنسان — <strong>Hardware</strong> هو الجسم، <strong>Software</strong> هو العقل. من غير بعض مش كمبيوتر!</div></div>
+      </div>
+      <div class="row2">
+        <div class="gcard blue-acc step" id="s02-t0">
+          <div class="gc-ico blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg></div>
+          <div class="gc-label" style="color:var(--blue-ac)">HARDWARE</div>
+          <div class="gc-title" style="color:var(--blue-ac)">الجسد الملموس</div>
+          <div class="gc-body">(اليدين، الدماغ، القلب)<br>من غيره السوفتوير ملوش مكان يعيش فيه!</div>
+        </div>
+        <div class="gcard purple-acc step" id="s02-t1">
+          <div class="gc-ico purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 017 7c0 4-7 13-7 13S5 13 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+          <div class="gc-label" style="color:var(--purple-ac)">SOFTWARE</div>
+          <div class="gc-title" style="color:var(--purple-ac)">الروح والعقل</div>
+          <div class="gc-body">(الأفكار، المشاعر، القرارات)<br>من غيره الهاردوير مجرد علبة حديد!</div>
+        </div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s02p0"></div><div class="sp-pip" id="s02p1"></div></div></div>
+  </div>
+
+  <!-- ══ S03 · Hardware Grid ══ -->
+  <div class="slide" id="s03" data-steps="2">
+    <div class="s-head"><div class="s-tag">HARDWARE KINGDOM · مملكة الهاردوير</div><div class="s-ctr"><span>03</span>/14</div></div>
+    <div class="s-body">
+      <div class="pro-tip fw"><div class="pt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg></div><div>أسهل طريقة تتذكر: لو ممكن تودّيه على السيرفيس والتصليح = <strong>Hardware!</strong></div></div>
+      <div class="hw-grid">
+        <div class="hw-item step" id="s03-t0a"><img src="https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=400&q=75&auto=format&fit=crop" alt="CPU" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">CPU — المعالج</div><div class="hw-sub">دماغ الكمبيوتر</div></div></div>
+        <div class="hw-item step" id="s03-t0b"><img src="https://images.unsplash.com/photo-1562976540-1502c2145186?w=400&q=75&auto=format&fit=crop" alt="RAM" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">RAM — الذاكرة</div><div class="hw-sub">المكتب المؤقت</div></div></div>
+        <div class="hw-item step" id="s03-t0c"><img src="https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400&q=75&auto=format&fit=crop" alt="Storage" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">Storage — التخزين</div><div class="hw-sub">الأرشيف الدائم</div></div></div>
+        <div class="hw-item step" id="s03-t1a"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=75&auto=format&fit=crop" alt="Monitor" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">Monitor — الشاشة</div><div class="hw-sub">جهاز Output</div></div></div>
+        <div class="hw-item step" id="s03-t1b"><img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=75&auto=format&fit=crop" alt="Keyboard" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">Keyboard — كيبورد</div><div class="hw-sub">جهاز Input</div></div></div>
+        <div class="hw-item step" id="s03-t1c"><img src="https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&q=75&auto=format&fit=crop" alt="Mouse" class="hw-img" loading="lazy"><div class="hw-cap"><div class="hw-name">Mouse — الماوس</div><div class="hw-sub">جهاز Input</div></div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s03p0"></div><div class="sp-pip" id="s03p1"></div></div></div>
+  </div>
+
+  <!-- ══ S04 · Software Cloud ══ -->
+  <div class="slide" id="s04" data-steps="2">
+    <div class="s-head"><div class="s-tag">SOFTWARE WORLD · عالم السوفتوير</div><div class="s-ctr"><span>04</span>/14</div></div>
+    <div class="s-body">
+      <div class="pro-tip fw"><div class="pt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg></div><div>لو بتنزّله وتعمله <strong>Download</strong> من الإنترنت = <strong>Software!</strong></div></div>
+      <div class="step fw" id="s04-t0" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div class="sw-pill" style="background:rgba(26,86,219,.14);border:1px solid rgba(96,165,250,.28);color:var(--blue-ac);">OPERATING SYSTEMS — أنظمة التشغيل</div>
+        <div class="sw-grid">
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="sw-name">Windows</div><div class="sw-type">OS</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 018 0"/></svg></div><div class="sw-name">macOS</div><div class="sw-type">OS</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg></div><div class="sw-name">Android</div><div class="sw-type">OS</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="3"/><circle cx="12" cy="17" r="1"/></svg></div><div class="sw-name">iOS</div><div class="sw-type">OS</div></div>
+        </div>
+      </div>
+      <div class="step fw" id="s04-t1" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div class="sw-pill" style="background:rgba(124,58,237,.14);border:1px solid rgba(167,139,250,.28);color:var(--purple-ac);">APPLICATIONS &amp; TOOLS — التطبيقات</div>
+        <div class="sw-grid">
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20"/></svg></div><div class="sw-name">Chrome</div><div class="sw-type">Browser</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="sw-name">Word</div><div class="sw-type">Office</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></div><div class="sw-name">Photoshop</div><div class="sw-type">Design</div></div>
+          <div class="sw-item"><div class="sw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10,9 16,12 10,15" fill="var(--purple-ac)"/></svg></div><div class="sw-name">Games</div><div class="sw-type">Entertainment</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s04p0"></div><div class="sp-pip" id="s04p1"></div></div></div>
+  </div>
+
+  <!-- ══ S05 · Integration Diagram ══ -->
+  <div class="slide" id="s05" data-steps="1">
+    <div class="s-head"><div class="s-tag">OS DIAGRAM · المدير الكبير</div><div class="s-ctr"><span>05</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">THE INTEGRATION DIAGRAM</div>
+      <div class="s-title" style="font-size:clamp(20px,3.4vw,32px);">كيف <span class="ac">Hardware</span> و<span class="gd">Software</span> بيتوحّدوا؟</div>
+      <div class="diag-wrap">
+        <div class="diag-col hw">
+          <div class="diag-lbl">HARDWARE</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>CPU — المعالج</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/></svg>RAM — الذاكرة</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Monitor — الشاشة</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8"><rect x="2" y="8" width="20" height="13" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Storage — التخزين</div>
+        </div>
+        <div class="diag-mid">
+          <div class="diag-mid-lbl">BRIDGE</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div class="diag-mid-lbl">OS</div>
+        </div>
+        <div class="diag-col sw">
+          <div class="diag-lbl">SOFTWARE</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9" stroke-linecap="round"/></svg>OS — نظام التشغيل</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" stroke-linecap="round"/></svg>Browser — المتصفح</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Apps — التطبيقات</div>
+          <div class="diag-row"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-ac)" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10,9 16,12 10,15" fill="var(--purple-ac)" stroke="none"/></svg>Games — الألعاب</div>
+        </div>
+      </div>
+      <div class="os-card step fw" id="s05-t0">
+        <div class="oc-lbl">THE BIG BOSS · المدير الكبير</div>
+        <div class="oc-title">Operating System (OS)</div>
+        <div class="oc-body">الـ OS برنامج بيشتغل فوق الـ Hardware مباشرةً وبيدير كل البرامج التانية — هو الوسيط بينك وبين الجهاز، وبدونه ما فيش برنامج يشتغل!</div>
+        <div class="os-pills"><span class="os-pill">Windows</span><span class="os-pill">macOS</span><span class="os-pill">Linux</span><span class="os-pill">Android</span><span class="os-pill">iOS</span></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s05p0"></div></div></div>
+  </div>
+
+  <!-- ══ S06 · Dictionary ══ -->
+  <div class="slide" id="s06" data-steps="6">
+    <div class="s-head"><div class="s-tag">VISUAL DICTIONARY · قاموس بايت</div><div class="s-ctr"><span>06</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">BYTE'S TECH DICTIONARY</div>
+      <div class="s-title" style="font-size:clamp(20px,3vw,30px);">قاموس الدرس الثاني</div>
+      <div class="dict-grid fw">
+        <div class="dict-item step" id="s06-t0"><div class="di-n">01</div><div class="di-en">Hardware</div><div class="di-sep">←</div><div class="di-ar">عتاد مادي</div></div>
+        <div class="dict-item step" id="s06-t1"><div class="di-n">02</div><div class="di-en">Software</div><div class="di-sep">←</div><div class="di-ar">برمجيات</div></div>
+        <div class="dict-item step" id="s06-t2"><div class="di-n">03</div><div class="di-en">OS</div><div class="di-sep">←</div><div class="di-ar">المدير الكبير</div></div>
+        <div class="dict-item step" id="s06-t3"><div class="di-n">04</div><div class="di-en">CPU</div><div class="di-sep">←</div><div class="di-ar">دماغ الكمبيوتر</div></div>
+        <div class="dict-item step" id="s06-t4"><div class="di-n">05</div><div class="di-en">RAM</div><div class="di-sep">←</div><div class="di-ar">ذاكرة مؤقتة / المكتب</div></div>
+        <div class="dict-item step" id="s06-t5"><div class="di-n">06</div><div class="di-en">Application</div><div class="di-sep">←</div><div class="di-ar">تطبيق يخدم غرض</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track" id="s06-track"></div></div>
+  </div>
+
+  <!-- ══ S07 · Sorting Lab ══ -->
+  <div class="slide" id="s07" data-steps="2">
+    <div class="s-head"><div class="s-tag">THE LAB · المختبر</div><div class="s-ctr"><span>07</span>/14</div></div>
+    <div class="s-body" style="gap:9px;">
+      <div class="buckets fw">
+        <div class="bucket bkt-hw"><div class="bkt-lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>Hardware</div><div class="bkt-items" id="hw-bkt"></div></div>
+        <div class="bucket bkt-sw"><div class="bkt-lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Software</div><div class="bkt-items" id="sw-bkt"></div></div>
+      </div>
+      <div class="step fw" id="s07-t0" style="text-align:center;">
+        <div style="font-family:var(--fm);font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.35);margin-bottom:7px;">SOLVED EXAMPLE</div>
+        <div style="font-size:clamp(11px,1.8vw,13px);color:rgba(255,255,255,.55);">Screen → HW · Firefox → SW · RAM → HW · Python → SW</div>
+      </div>
+      <div class="step fw" id="s07-t1" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="font-family:var(--fm);font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.35);">YOUR TURN — اضغط على كل كارت</div>
+        <div class="chal-wrap" id="chal-wrap"></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s07p0"></div><div class="sp-pip" id="s07p1"></div></div></div>
+  </div>
+
+  <!-- ══ S08 · IPO Teaser ══ -->
+  <div class="slide" id="s08" data-steps="1">
+    <div class="s-head"><div class="s-tag">IPO TEASER · الدرس القادم</div><div class="s-ctr"><span>08</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">LESSON 1.3 PREVIEW</div>
+      <div class="s-title" style="font-size:clamp(20px,3.5vw,34px);">الكمبيوتر بيعمل <span class="ac">نفس</span> اللي إنت بتعمله!</div>
+      <div class="ipo-wrap">
+        <div class="ipo-side ipo-human">
+          <div class="ipo-ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-ac)" stroke-width="1.8" width="36" height="36"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2" stroke-linecap="round"/></svg></div>
+          <div class="ipo-title">الإنسان</div>
+          <div class="ipo-steps">
+            <div class="ipo-step ipo-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h12" stroke-linecap="round"/></svg>أكل — Input</div>
+            <div class="ipo-step ipo-pr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>هضم — Process</div>
+            <div class="ipo-step ipo-out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>طاقة — Output</div>
+          </div>
+        </div>
+        <div class="ipo-eq">=</div>
+        <div class="ipo-side ipo-cpu">
+          <div class="ipo-ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-ac)" stroke-width="1.8" width="36" height="36"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg></div>
+          <div class="ipo-title">الكمبيوتر</div>
+          <div class="ipo-steps">
+            <div class="ipo-step ipo-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="13" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/></svg>كيبورد — Input</div>
+            <div class="ipo-step ipo-pr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>CPU — Process</div>
+            <div class="ipo-step ipo-out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>شاشة — Output</div>
+          </div>
+        </div>
+      </div>
+      <div class="teaser step fw" id="s08-t0" style="max-width:860px;text-align:right;">
+        <div class="t-lbl">BRAIN TEASER · حيّر دماغك</div>
+        <div class="t-q">لما بتاكل — بتدخّل أكل (<span class="ac">Input</span>)، جسمك بيعالجه (<span class="ac">Process</span>)، وبيطلع طاقة (<span class="ac">Output</span>).<br>الكمبيوتر بيعمل نفس الحاجة! <span class="gd">تفتكر إزّاي؟</span></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s08p0"></div></div></div>
+  </div>
+
+  <!-- ══════════ QUIZ SECTION (S09–S14) ══════════ -->
+  <!-- Q1 -->
+  <div class="slide" id="s09" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 1 / 6</div><div class="s-ctr"><span>09</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">QUIZ TIME · التحدي</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:0%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">أي مما يلي يُعتبر <span class="ac">Hardware</span>؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="false"><div class="ql">أ</div>Windows 11</button>
+          <button class="q-opt" data-ok="true"><div class="ql">ب</div>RAM</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ج</div>Chrome</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>Python</button>
+        </div>
+        <div class="q-fb good step" id="s09-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>الـ RAM هو ذاكرة مادية داخل الجهاز — تقدر تلمسه = Hardware!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s09p0"></div></div></div>
+  </div>
+  <!-- Q2 -->
+  <div class="slide" id="s10" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 2 / 6</div><div class="s-ctr"><span>10</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">QUIZ TIME</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:16%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">ما هو دور الـ <span class="ac">Operating System</span>؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="false"><div class="ql">أ</div>تخزين الملفات فقط</button>
+          <button class="q-opt" data-ok="true"><div class="ql">ب</div>إدارة الـ Hardware والبرامج</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ج</div>تصميم واجهة المستخدم</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>تشغيل الألعاب فقط</button>
+        </div>
+        <div class="q-fb good step" id="s10-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>الـ OS هو المدير الكبير — بيدير الـ Hardware والبرامج التانية دون توقف!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s10p0"></div></div></div>
+  </div>
+  <!-- Q3 -->
+  <div class="slide" id="s11" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 3 / 6</div><div class="s-ctr"><span>11</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">QUIZ TIME</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:33%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">مين يتفوق في <span class="ac">الإبداع</span>؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="false"><div class="ql">أ</div>الكمبيوتر دائماً</button>
+          <button class="q-opt" data-ok="true"><div class="ql">ب</div>الإنسان</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ج</div>الاثنان متساويان</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>يعتمد على الموقف</button>
+        </div>
+        <div class="q-fb good step" id="s11-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>الإنسان يتفوق في الإبداع والمشاعر. الكمبيوتر يتفوق في السرعة والدقة!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s11p0"></div></div></div>
+  </div>
+  <!-- Q4 -->
+  <div class="slide" id="s12" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 4 / 6</div><div class="s-ctr"><span>12</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">QUIZ TIME</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:50%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">لو حاجة بتعمل لها <span class="ac">Download</span> من الإنترنت — هي؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="false"><div class="ql">أ</div>Hardware</button>
+          <button class="q-opt" data-ok="true"><div class="ql">ب</div>Software</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ج</div>الاثنان</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>OS فقط</button>
+        </div>
+        <div class="q-fb good step" id="s12-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>نصيحة بايت: لو بتنزّله = Software. لو تلمسه وتصلّحه = Hardware!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s12p0"></div></div></div>
+  </div>
+  <!-- Q5 -->
+  <div class="slide" id="s13" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 5 / 6</div><div class="s-ctr"><span>13</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">QUIZ TIME</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:67%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">مرحلة الـ <span class="ac">كيبورد</span> في دورة IPO هي؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="false"><div class="ql">أ</div>Output</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ب</div>Process</button>
+          <button class="q-opt" data-ok="true"><div class="ql">ج</div>Input</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>Storage</button>
+        </div>
+        <div class="q-fb good step" id="s13-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>الكيبورد جهاز Input — بتدخّل منه الأوامر للكمبيوتر!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s13p0"></div></div></div>
+  </div>
+  <!-- Q6 -->
+  <div class="slide" id="s14" data-steps="1" data-quiz="true">
+    <div class="s-head"><div class="s-tag">ASSESSMENT · سؤال 6 / 6</div><div class="s-ctr"><span>14</span>/14</div></div>
+    <div class="s-body">
+      <div class="mono-pill">FINAL QUIZ QUESTION</div>
+      <div class="score-bar fw"><div class="score-fill" style="width:83%"></div></div>
+      <div class="quiz-wrap">
+        <div class="q-stem">الـ <span class="ac">Smart TV</span> هل هو كمبيوتر؟</div>
+        <div class="q-opts">
+          <button class="q-opt" data-ok="true"><div class="ql">أ</div>نعم، لأنه يعالج بيانات</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ب</div>لا، هو تلفزيون فقط</button>
+          <button class="q-opt" data-ok="false"><div class="ql">ج</div>نعم لكن بدون CPU</button>
+          <button class="q-opt" data-ok="false"><div class="ql">د</div>يعتمد على الشركة المصنعة</button>
+        </div>
+        <div class="q-fb good step" id="s14-t0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div>أي Smart Device يعالج بيانات هو كمبيوتر — الـ Smart TV والموبايل والتابلت كلها كمبيوترات!</div></div>
+      </div>
+    </div>
+    <div class="s-foot"><div class="foot-name">Zahra Essam</div><div class="sp-track"><div class="sp-pip on"></div><div class="sp-pip" id="s14p0"></div></div></div>
+  </div>
+
+</div><!-- /viewport -->
+
+<!-- ════════ CONTROL BAR ════════ -->
+<div id="ctrl">
+  <button class="c-btn" id="c-prev" disabled>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    السابق
+  </button>
+  <div id="prog"></div>
+  <button class="c-btn" id="c-next">
+    التالي
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
 </div>
 
-
-<!-- ──────────── JAVASCRIPT ──────────── -->
 <script>
 /* ══════════════════════════════════════════════
-   STATE
+   CONFIGURATION
 ══════════════════════════════════════════════ */
-const slides      = Array.from(document.querySelectorAll('.slide'));
-const totalSlides = slides.length;
-let currentSlide  = 0;
-let currentStep   = 0;
 
-/* ══════════════════════════════════════════════
-   SLIDE 3 — grouped step config
-   steps 0 = show s3-step0a/0b/0c together
-   steps 1 = show s3-step1a/1b/1c together
-══════════════════════════════════════════════ */
-const groupedSteps = {
-  's3': [
-    ['s3-step0a','s3-step0b','s3-step0c'],
-    ['s3-step1a','s3-step1b','s3-step1c']
+// Grouped steps: slide id → array of arrays of element IDs revealed together
+const GROUPS = {
+  s03: [
+    ['s03-t0a','s03-t0b','s03-t0c'],
+    ['s03-t1a','s03-t1b','s03-t1c']
   ]
 };
 
+// Quiz answers already answered per slide
+const quizDone = {};
+
 /* ══════════════════════════════════════════════
-   HELPERS
+   STATE
 ══════════════════════════════════════════════ */
-function getSteps(slideEl) {
-  return Array.from(slideEl.querySelectorAll('.step'));
-}
-function totalStepsOf(slideEl) {
-  const sid = slideEl.id;
-  if (groupedSteps[sid]) return groupedSteps[sid].length;
-  return getSteps(slideEl).length;
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let   ci     = 0;   // current slide index
+let   cs     = 0;   // current step revealed on this slide
+
+/* ══════════════════════════════════════════════
+   HELPERS: Steps
+══════════════════════════════════════════════ */
+function getStepEls(sl){ return Array.from(sl.querySelectorAll('.step')); }
+
+function stepCount(sl){
+  const id = sl.id;
+  if(GROUPS[id]) return GROUPS[id].length;
+  return getStepEls(sl).length;
 }
 
-function revealStep(slideEl, stepIdx) {
-  const sid = slideEl.id;
-  if (groupedSteps[sid]) {
-    const group = groupedSteps[sid][stepIdx];
-    if (group) group.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('revealed');
-    });
+function revealOne(sl, idx){
+  const id = sl.id;
+  if(GROUPS[id]){
+    const grp = GROUPS[id][idx];
+    if(grp) grp.forEach(eid=>{ const el=document.getElementById(eid); if(el) el.classList.add('on'); });
   } else {
-    const steps = getSteps(slideEl);
-    if (steps[stepIdx]) steps[stepIdx].classList.add('revealed');
+    const els = getStepEls(sl);
+    if(els[idx]) els[idx].classList.add('on');
   }
 }
 
-function revealAllSteps(slideEl) {
-  getSteps(slideEl).forEach(s => s.classList.add('revealed'));
+function revealAll(sl){
+  const id = sl.id;
+  if(GROUPS[id]){
+    GROUPS[id].forEach(g => g.forEach(eid=>{ const el=document.getElementById(eid); if(el) el.classList.add('on'); }));
+  } else {
+    getStepEls(sl).forEach(e => e.classList.add('on'));
+  }
 }
 
-function hideAllSteps(slideEl) {
-  getSteps(slideEl).forEach(s => s.classList.remove('revealed'));
+function hideAll(sl){
+  getStepEls(sl).forEach(e => e.classList.remove('on'));
 }
 
-function updateStepDots(slideEl, revealed) {
-  const sid = slideEl.id;
-  const total = totalStepsOf(slideEl);
-  for (let i = 0; i < total; i++) {
-    const dot = document.getElementById(`${sid}-sp${i}`);
-    if (dot) dot.classList.toggle('lit', i < revealed);
+/* Step pip update */
+function updatePips(sl, revealed){
+  const id = sl.id;
+  for(let i=0; i < stepCount(sl); i++){
+    const pip = document.getElementById(`${id}p${i}`);
+    if(pip) pip.classList.toggle('on', i < revealed);
   }
 }
 
 /* ══════════════════════════════════════════════
-   PROGRESS BAR
+   PROGRESS DOTS
 ══════════════════════════════════════════════ */
-const progDots = Array.from(document.querySelectorAll('.prog-dot'));
-
-function updateProgress(idx) {
-  progDots.forEach((d, i) => {
-    d.classList.remove('active','done');
-    if (i < idx)  d.classList.add('done');
-    if (i === idx) d.classList.add('active');
-  });
-}
-progDots.forEach(dot => {
-  dot.addEventListener('click', () => {
-    const t = parseInt(dot.dataset.slide, 10);
-    goToSlide(t, 'jump');
-  });
+const progEl = document.getElementById('prog');
+slides.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className='p-dot'+(i===0?' cur':'');
+  d.dataset.i = i;
+  d.addEventListener('click',()=>jumpTo(i));
+  progEl.appendChild(d);
 });
+const pDots = Array.from(document.querySelectorAll('.p-dot'));
+
+function syncDots(){
+  pDots.forEach((d,i)=>{
+    d.classList.remove('cur','done');
+    if(i < ci) d.classList.add('done');
+    if(i === ci) d.classList.add('cur');
+  });
+}
 
 /* ══════════════════════════════════════════════
-   BUTTONS
+   NAVIGATION BUTTONS
 ══════════════════════════════════════════════ */
-const btnPrev = document.getElementById('btn-prev');
-const btnNext = document.getElementById('btn-next');
+const btnP = document.getElementById('c-prev');
+const btnN = document.getElementById('c-next');
 
-function updateButtons() {
-  btnPrev.disabled = (currentSlide === 0 && currentStep === 0);
-  btnNext.disabled = (currentSlide === totalSlides - 1 &&
-    currentStep >= totalStepsOf(slides[currentSlide]));
+function syncBtns(){
+  const sl    = slides[ci];
+  const isQ   = sl.dataset.quiz === 'true';
+  const done  = quizDone[sl.id];
+  const stMax = stepCount(sl);
+  btnP.disabled = (ci===0 && cs===0);
+  btnN.disabled = (ci===total-1 && cs>=stMax) ||
+                  (isQ && !done && cs>=stMax);
 }
 
 /* ══════════════════════════════════════════════
    CORE NAVIGATION
 ══════════════════════════════════════════════ */
-function goToSlide(target, direction) {
-  const slideEl = slides[currentSlide];
+function goNext(){
+  const sl   = slides[ci];
+  const isQ  = sl.dataset.quiz==='true';
+  if(isQ && !quizDone[sl.id]) return; // block until answered
 
-  if (direction === 'next') {
-    const total = totalStepsOf(slideEl);
-    if (currentStep < total) {
-      revealStep(slideEl, currentStep);
-      currentStep++;
-      updateStepDots(slideEl, currentStep);
-      updateButtons();
-
-      // Slide 7 step 0 = auto-populate buckets with solved example
-      if (slideEl.id === 's7' && currentStep === 1) populateSolvedBuckets();
-      return;
-    }
-    if (currentSlide < totalSlides - 1) {
-      slideEl.classList.remove('active');
-      currentSlide++;
-      currentStep = 0;
-      const next = slides[currentSlide];
-      hideAllSteps(next);
-      next.classList.add('active');
-      updateStepDots(next, 0);
-      updateProgress(currentSlide);
-      updateButtons();
-    }
-
-  } else if (direction === 'prev') {
-    if (currentStep > 0) {
-      currentStep--;
-      const sid = slideEl.id;
-      if (groupedSteps[sid]) {
-        const group = groupedSteps[sid][currentStep];
-        if (group) group.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.classList.remove('revealed');
-        });
-      } else {
-        const steps = getSteps(slideEl);
-        if (steps[currentStep]) steps[currentStep].classList.remove('revealed');
-      }
-      updateStepDots(slideEl, currentStep);
-      updateButtons();
-      return;
-    }
-    if (currentSlide > 0) {
-      slideEl.classList.remove('active');
-      currentSlide--;
-      const prev = slides[currentSlide];
-      revealAllSteps(prev);
-      currentStep = totalStepsOf(prev);
-      prev.classList.add('active');
-      updateStepDots(prev, currentStep);
-      updateProgress(currentSlide);
-      updateButtons();
-    }
-
-  } else if (direction === 'jump') {
-    slideEl.classList.remove('active');
-    currentSlide = Math.max(0, Math.min(target, totalSlides - 1));
-    currentStep  = 0;
-    const t = slides[currentSlide];
-    hideAllSteps(t);
-    t.classList.add('active');
-    updateStepDots(t, 0);
-    updateProgress(currentSlide);
-    updateButtons();
+  const stMax = stepCount(sl);
+  if(cs < stMax){
+    revealOne(sl, cs);
+    cs++;
+    updatePips(sl, cs);
+    // side-effect: populate buckets
+    if(sl.id==='s07' && cs===1) fillSolvedBuckets();
+    syncBtns();
+    return;
+  }
+  if(ci < total-1){
+    slides[ci].classList.remove('active');
+    ci++;
+    cs=0;
+    const next = slides[ci];
+    hideAll(next);
+    next.classList.add('active');
+    updatePips(next, 0);
+    syncDots();
+    syncBtns();
   }
 }
 
-btnNext.addEventListener('click', () => goToSlide(null, 'next'));
-btnPrev.addEventListener('click', () => goToSlide(null, 'prev'));
+function goPrev(){
+  const sl = slides[ci];
+  if(cs>0){
+    cs--;
+    const id = sl.id;
+    if(GROUPS[id]){
+      const grp = GROUPS[id][cs];
+      if(grp) grp.forEach(eid=>{ const el=document.getElementById(eid); if(el) el.classList.remove('on'); });
+    } else {
+      const els = getStepEls(sl);
+      if(els[cs]) els[cs].classList.remove('on');
+    }
+    updatePips(sl, cs);
+    syncBtns();
+    return;
+  }
+  if(ci>0){
+    slides[ci].classList.remove('active');
+    ci--;
+    const prev = slides[ci];
+    revealAll(prev);
+    cs = stepCount(prev);
+    prev.classList.add('active');
+    updatePips(prev, cs);
+    syncDots();
+    syncBtns();
+  }
+}
+
+function jumpTo(idx){
+  slides[ci].classList.remove('active');
+  ci=Math.max(0,Math.min(idx,total-1));
+  cs=0;
+  const t=slides[ci];
+  hideAll(t);
+  t.classList.add('active');
+  updatePips(t,0);
+  syncDots();
+  syncBtns();
+}
+
+btnN.addEventListener('click', goNext);
+btnP.addEventListener('click', goPrev);
 
 /* ══════════════════════════════════════════════
-   KEYBOARD
+   KEYBOARD + TOUCH
 ══════════════════════════════════════════════ */
-document.addEventListener('keydown', e => {
-  if (['ArrowRight',' '].includes(e.key)) { e.preventDefault(); goToSlide(null,'next'); }
-  if (e.key === 'ArrowLeft')               { e.preventDefault(); goToSlide(null,'prev'); }
+document.addEventListener('keydown', e=>{
+  if([' ','ArrowRight'].includes(e.key)){ e.preventDefault(); goNext(); }
+  if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }
 });
 
+let tx=0,ty=0;
+const vp = document.getElementById('viewport');
+vp.addEventListener('touchstart',e=>{ tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; },{passive:true});
+vp.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>38){ dx<0?goNext():goPrev(); }
+},{passive:true});
+
 /* ══════════════════════════════════════════════
-   TOUCH / SWIPE
+   QUIZ ENGINE
 ══════════════════════════════════════════════ */
-let touchStartX = 0;
-let touchStartY = 0;
-
-document.getElementById('deck').addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].clientX;
-  touchStartY = e.changedTouches[0].clientY;
-}, { passive: true });
-
-document.getElementById('deck').addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-    // RTL: swipe left = next, swipe right = prev
-    if (dx < 0) goToSlide(null, 'next');
-    else         goToSlide(null, 'prev');
-  }
-}, { passive: true });
+function initQuiz(sl){
+  const opts = Array.from(sl.querySelectorAll('.q-opt'));
+  const fbId = sl.id+'-t0';
+  opts.forEach(opt=>{
+    opt.addEventListener('click',function(){
+      if(quizDone[sl.id]) return;
+      quizDone[sl.id]=true;
+      const ok = this.dataset.ok==='true';
+      opts.forEach(o=>{
+        o.classList.add('locked');
+        if(o.dataset.ok==='true') o.classList.add('correct');
+      });
+      if(!ok) this.classList.add('wrong');
+      const fb = document.getElementById(fbId);
+      if(fb){ fb.classList.add('on'); if(!ok){ fb.classList.remove('good'); fb.classList.add('bad'); } }
+      syncBtns();
+    });
+  });
+}
+slides.filter(s=>s.dataset.quiz==='true').forEach(initQuiz);
 
 /* ══════════════════════════════════════════════
-   SLIDE 7 — SORTING GAME LOGIC
+   SORTING GAME
 ══════════════════════════════════════════════ */
 const solvedItems = [
-  { name: 'Screen',   type: 'hw' },
-  { name: 'Firefox',  type: 'sw' },
-  { name: 'RAM',      type: 'hw' },
-  { name: 'Python',   type: 'sw' },
+  {n:'Screen', t:'hw'},{n:'Firefox', t:'sw'},{n:'RAM', t:'hw'},{n:'Python', t:'sw'}
+];
+const chalItems = [
+  {n:'Keyboard', t:'hw'},{n:'Windows', t:'sw'},{n:'Printer', t:'hw'},
+  {n:'YouTube', t:'sw'},{n:'GPU', t:'hw'},{n:'Photoshop', t:'sw'}
 ];
 
-const challengeItems = [
-  { name: 'Keyboard',        type: 'hw', icon: '⌨️' },
-  { name: 'Windows',         type: 'sw', icon: '🪟' },
-  { name: 'Printer',         type: 'hw', icon: '🖨️' },
-  { name: 'YouTube',         type: 'sw', icon: '📺' },
-  { name: 'GPU',             type: 'hw', icon: '🎮' },
-  { name: 'Adobe Photoshop', type: 'sw', icon: '🎨' },
-];
-
-function populateSolvedBuckets() {
-  const hwBucket = document.getElementById('hw-bucket');
-  const swBucket = document.getElementById('sw-bucket');
-  hwBucket.innerHTML = '';
-  swBucket.innerHTML = '';
-  solvedItems.forEach((item, i) => {
-    const tag = document.createElement('div');
-    tag.className = `b-tag ${item.type}-tag`;
-    tag.textContent = item.name;
-    tag.style.animationDelay = `${i * 0.1}s`;
-    if (item.type === 'hw') hwBucket.appendChild(tag);
-    else swBucket.appendChild(tag);
+function fillSolvedBuckets(){
+  const hb=document.getElementById('hw-bkt');
+  const sb=document.getElementById('sw-bkt');
+  hb.innerHTML=''; sb.innerHTML='';
+  solvedItems.forEach((item,i)=>{
+    const c=document.createElement('div');
+    c.className=`b-chip ${item.t}`;
+    c.textContent=item.n;
+    c.style.animationDelay=`${i*0.1}s`;
+    (item.t==='hw'?hb:sb).appendChild(c);
   });
 }
 
-function buildChallengeGrid() {
-  const grid = document.getElementById('challenge-grid');
-  grid.innerHTML = '';
-  challengeItems.forEach(item => {
-    const card = document.createElement('button');
-    card.className = 'chal-card';
-    card.innerHTML = `<div class="cc-ico">${item.icon}</div>${item.name}<span class="cc-badge">${item.type === 'hw' ? 'HW 🔩' : 'SW 💿'}</span>`;
-    card.dataset.type = item.type;
-    card.addEventListener('click', () => {
-      if (card.classList.contains('revealed-hw') || card.classList.contains('revealed-sw')) return;
-      card.classList.add(item.type === 'hw' ? 'revealed-hw' : 'revealed-sw');
-      // Also drop into bucket
-      const hwBucket = document.getElementById('hw-bucket');
-      const swBucket = document.getElementById('sw-bucket');
-      const tag = document.createElement('div');
-      tag.className = `b-tag ${item.type}-tag`;
-      tag.textContent = item.name;
-      if (item.type === 'hw') hwBucket.appendChild(tag);
-      else swBucket.appendChild(tag);
+function buildChallenge(){
+  const wrap=document.getElementById('chal-wrap');
+  wrap.innerHTML='';
+  chalItems.forEach(item=>{
+    const b=document.createElement('button');
+    b.className='chal-btn';
+    b.innerHTML=`${item.n}<span class="chal-badge">${item.t==='hw'?'HW':'SW'}</span>`;
+    b.dataset.t=item.t;
+    b.addEventListener('click',function(){
+      if(this.classList.contains('hw')||this.classList.contains('sw')) return;
+      this.classList.add(item.t);
+      const hb=document.getElementById('hw-bkt');
+      const sb=document.getElementById('sw-bkt');
+      const c=document.createElement('div');
+      c.className=`b-chip ${item.t}`;
+      c.textContent=item.n;
+      (item.t==='hw'?hb:sb).appendChild(c);
     });
-    grid.appendChild(card);
+    wrap.appendChild(b);
   });
 }
+
+/* ══════════════════════════════════════════════
+   VIEWPORT HEIGHT FIT
+══════════════════════════════════════════════ */
+function fitVP(){
+  const cb=document.getElementById('ctrl');
+  const h=cb.offsetHeight;
+  vp.style.height=`calc(100dvh - ${h}px)`;
+}
+fitVP();
+window.addEventListener('resize',fitVP);
 
 /* ══════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════ */
-(function init() {
-  // Build challenge grid
-  buildChallengeGrid();
-  // Ensure only first slide visible
-  slides.forEach((s, i) => {
-    if (i !== 0) s.classList.remove('active');
-    hideAllSteps(s);
-  });
+(function init(){
+  // Build s06 step pips dynamically
+  const s06Track=document.getElementById('s06-track');
+  if(s06Track){
+    for(let i=0;i<=6;i++){
+      const p=document.createElement('div');
+      p.className='sp-pip'+(i===0?' on':'');
+      if(i>0) p.id=`s06p${i-1}`;
+      s06Track.appendChild(p);
+    }
+  }
+  buildChallenge();
+  slides.forEach((s,i)=>{ if(i!==0){s.classList.remove('active');} hideAll(s); });
   slides[0].classList.add('active');
-  updateProgress(0);
-  updateButtons();
+  syncDots();
+  syncBtns();
 })();
 </script>
 </body>
